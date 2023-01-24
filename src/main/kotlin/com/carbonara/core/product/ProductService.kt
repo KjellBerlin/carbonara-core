@@ -20,7 +20,8 @@ class ProductService(
             ProductDto(
                 productId = ObjectId(),
                 productName = createProductInput.productName,
-                productPrice = createProductInput.productPrice
+                productPrice = createProductInput.productPrice,
+                productPictureUrl = createProductInput.productPictureUrl
             )
         ).awaitSingleOrNull()?.toProduct()
     }

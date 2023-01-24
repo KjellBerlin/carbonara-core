@@ -16,7 +16,10 @@ class Product (
     val productName: String,
 
     @GraphQLDescription("Price of a product in cent")
-    val productPrice: Int
+    val productPrice: Int,
+
+    @GraphQLDescription("Url to the Image of the product")
+    val productPictureUrl: String,
 )
 
 @Document("Product")
@@ -24,13 +27,15 @@ data class ProductDto(
     @Id
     val productId: ObjectId,
     val productName: String,
-    val productPrice: Int
+    val productPrice: Int,
+    val productPictureUrl: String
 ) {
     fun toProduct(): Product {
         return Product(
             productId = ID(productId.toString()),
             productName = productName,
-            productPrice = productPrice
+            productPrice = productPrice,
+            productPictureUrl = productPictureUrl
         )
     }
 }

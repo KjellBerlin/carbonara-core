@@ -24,7 +24,8 @@ class ProductServiceTest {
     fun `when creating a product it should be added to the database`() {
         val createProductInput = CreateProductInput(
             productName = "test-product",
-            productPrice = 1000
+            productPrice = 1000,
+            productPictureUrl = "https://example.com"
         )
 
         every {
@@ -40,6 +41,7 @@ class ProductServiceTest {
                 match {
                     it.productName == TEST_PRODUCT.productName
                             && it.productPrice == TEST_PRODUCT.productPrice
+                            && it.productPictureUrl == TEST_PRODUCT.productPictureUrl
                 }
             )
         }
@@ -49,7 +51,8 @@ class ProductServiceTest {
         val TEST_PRODUCT = ProductDto(
             productId = ObjectId(),
             productName = "test-product",
-            productPrice = 1000
+            productPrice = 1000,
+            productPictureUrl = "https://example.com"
         )
     }
 }
