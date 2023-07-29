@@ -13,4 +13,9 @@ class ProductQuery(
     suspend fun product(): List<Product> {
         return productService.getAllProducts()
     }
+
+    @GraphQLDescription("The product which is available for sale at the moment")
+    suspend fun activeProduct(): Product? {
+        return productService.getActiveProduct()
+    }
 }

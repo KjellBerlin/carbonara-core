@@ -14,6 +14,11 @@ class ProductMutation(
     suspend fun createProduct(createProductInput: CreateProductInput): Product? {
         return productService.createProduct(createProductInput)
     }
+
+    @GraphQLDescription("Admin controller to set a product to active")
+    suspend fun updateProductToActive(productId: String): Product? {
+        return productService.setActiveProduct(productId)
+    }
 }
 
 data class CreateProductInput(

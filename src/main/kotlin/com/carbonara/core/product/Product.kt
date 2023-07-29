@@ -20,6 +20,9 @@ class Product (
 
     @GraphQLDescription("Url to the Image of the product")
     val productPictureUrl: String,
+
+    @GraphQLDescription("This product is active right now and can be purchased")
+    var isActive: Boolean
 )
 
 @Document("Product")
@@ -28,14 +31,16 @@ data class ProductDto(
     val productId: ObjectId,
     val productName: String,
     val productPrice: Int,
-    val productPictureUrl: String
+    val productPictureUrl: String,
+    var isActive: Boolean?
 ) {
     fun toProduct(): Product {
         return Product(
             productId = ID(productId.toString()),
             productName = productName,
             productPrice = productPrice,
-            productPictureUrl = productPictureUrl
+            productPictureUrl = productPictureUrl,
+            isActive = isActive ?: false
         )
     }
 }
