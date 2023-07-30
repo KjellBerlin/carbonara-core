@@ -49,6 +49,4 @@ class ProductService(
         // log.info("New active product is the product with productID={}", newActiveProduct?.productId)
         return productRepository.save(newActiveProduct).awaitSingleOrNull()?.toProduct() ?: throw Exception("Can not save new active product")
     }
-
-
 }
