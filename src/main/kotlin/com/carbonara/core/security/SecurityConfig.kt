@@ -12,10 +12,6 @@ class SecurityConfig {
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        /*
-        This is where we configure the security required for our endpoints and setup our app to serve as
-        an OAuth2 Resource Server, using JWT validation.
-        */
         return http
             .authorizeHttpRequests { authorize ->
                 authorize

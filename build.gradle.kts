@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.1.5"
+	id("org.springframework.boot") version "3.2.3"
 	id("io.spring.dependency-management") version "1.1.3"
 
 	kotlin("jvm") version "1.8.22"
@@ -32,7 +32,7 @@ dependencies {
 
 	// Auth0
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.okta.spring:okta-spring-boot-starter:3.0.5")
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.13.4")
