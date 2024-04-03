@@ -2,6 +2,7 @@ package com.carbonara.core.product
 
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.bson.types.ObjectId
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Component
 
 @Component

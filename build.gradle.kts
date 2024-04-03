@@ -31,7 +31,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
 	// Auth0
-	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
