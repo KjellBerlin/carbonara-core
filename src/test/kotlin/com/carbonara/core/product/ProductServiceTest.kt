@@ -99,28 +99,28 @@ class ProductServiceTest {
     }
 
     companion object {
-        val TEST_PRODUCT_1_NOT_ACTIVE = ProductDto(
+        val TEST_PRODUCT_1_NOT_ACTIVE = ProductDao(
             productId = ObjectId(),
             productName = "test-product-1",
             productPrice = 1000,
             productPictureUrl = "https://example.com",
             isActive = false
         )
-        val TEST_PRODUCT_1_ACTIVE = ProductDto(
+        val TEST_PRODUCT_1_ACTIVE = ProductDao(
             productId = TEST_PRODUCT_1_NOT_ACTIVE.productId,
             productName = "test-product-1",
             productPrice = 1000,
             productPictureUrl = "https://example.com",
             isActive = true
         )
-        val TEST_PRODUCT_2_NOT_ACTIVE = ProductDto(
+        val TEST_PRODUCT_2_NOT_ACTIVE = ProductDao(
             productId = ObjectId(),
             productName = "test-product-2",
             productPrice = 1100,
             productPictureUrl = "https://example.com",
             isActive = false
         )
-        val TEST_PRODUCT_2_ACTIVE = ProductDto(
+        val TEST_PRODUCT_2_ACTIVE = ProductDao(
             productId = TEST_PRODUCT_2_NOT_ACTIVE.productId,
             productName = "test-product-2",
             productPrice = 1100,

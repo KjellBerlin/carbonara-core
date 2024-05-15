@@ -1,8 +1,8 @@
 package com.carbonara.core.product
 
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import mu.KotlinLogging
 import org.bson.types.ObjectId
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,7 +22,7 @@ class ProductService(
         createProductInput: CreateProductInput,
     ): Product? {
         val newProduct =  productRepository.save(
-            ProductDto(
+            ProductDao(
                 productId = ObjectId(),
                 productName = createProductInput.productName,
                 productPrice = createProductInput.productPrice,
@@ -31,11 +31,9 @@ class ProductService(
             )
         ).awaitSingleOrNull()?.toProduct()
 
-        // log.info("Created new product with ID={}", newProduct?.productId)
+        log.info("Created new product with ID={}", newProduct?.productId)
         return newProduct
     }
-
-    // TODO: add logging
 
     suspend fun setActiveProduct(
         productId: String,
@@ -47,7 +45,11 @@ class ProductService(
         }
         val newActiveProduct = productRepository.findById(ObjectId(productId)).awaitSingleOrNull() ?: throw Exception("No product found")
         newActiveProduct.isActive = true
-        // log.info("New active product is the product with productID={}", newActiveProduct?.productId)
+        log.info("New active product is the product with productID={}", newActiveProduct.productId)
         return productRepository.save(newActiveProduct).awaitSingleOrNull()?.toProduct() ?: throw Exception("Can not save new active product")
+    }
+
+    companion object {
+        private val log = KotlinLogging.logger {}
     }
 }
