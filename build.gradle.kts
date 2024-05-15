@@ -29,7 +29,7 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:1.4.14")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:7.0.0-alpha.5")
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
 
 	// MongoDB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
