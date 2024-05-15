@@ -6,9 +6,9 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface ProductRepository:
-        ReactiveMongoRepository<ProductDto, ObjectId> {
+        ReactiveMongoRepository<ProductDao, ObjectId> {
 
-        fun findFirstByIsActiveIsTrue() : Mono<ProductDto>
+        fun findFirstByIsActiveIsTrue() : Mono<ProductDao>
 
-        fun findAllByIsActiveIsTrue() : Flux<ProductDto>
+        fun findAllByIsActiveIsTrue() : Flux<ProductDao>
 }
