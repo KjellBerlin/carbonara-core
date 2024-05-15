@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.2.3"
-	id("io.spring.dependency-management") version "1.1.3"
+	id("org.springframework.boot") version "3.2.5"
+	id("io.spring.dependency-management") version "1.1.5"
 
-	kotlin("jvm") version "1.8.22"
-	kotlin("plugin.spring") version "1.8.22"
+	kotlin("jvm") version "1.9.24"
+	kotlin("plugin.spring") version "1.9.24"
 
 	application
 }
@@ -29,7 +29,7 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:1.4.14")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:7.0.0-alpha.5")
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
 
 	// MongoDB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
@@ -39,7 +39,7 @@ dependencies {
 	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.13.4")
+	testImplementation("io.mockk:mockk:1.13.10")
 }
 
 tasks.withType<KotlinCompile> {
