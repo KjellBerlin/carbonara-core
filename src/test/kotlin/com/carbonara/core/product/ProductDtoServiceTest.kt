@@ -5,12 +5,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 
-class ProductServiceTest {
+class ProductDtoServiceTest {
 
     private lateinit var productService: ProductService
     private lateinit var productRepository: ProductRepository
@@ -95,7 +96,18 @@ class ProductServiceTest {
                 }
             )
         }
+    }
 
+    @Test
+    fun `Happy case - getProductDaosByIds returns one product`() {
+        every {
+            productRepository.findAllById(listOf(TEST_PRODUCT_1_ACTIVE.productId))
+        } returns listOf(TEST_PRODUCT_1_ACTIVE).toFlux()
+
+        val result = runBlocking {
+            productService.getProductDaosByIds(listOf(TEST_PRODUCT_1_ACTIVE.productId.toString()))
+        }
+        assertEquals(listOf(TEST_PRODUCT_1_ACTIVE), result)
     }
 
     companion object {

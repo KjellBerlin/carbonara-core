@@ -11,18 +11,12 @@ class ProductMutation(
 
     // TODO: needs to be secured to be only accessible by admins
     @GraphQLDescription("Admin controller to create a product")
-    suspend fun createProduct(createProductInput: CreateProductInput): Product? {
+    suspend fun createProduct(createProductInput: CreateProductInput): ProductDto? {
         return productService.createProduct(createProductInput)
     }
 
     @GraphQLDescription("Admin controller to set a product to active")
-    suspend fun updateProductToActive(productId: String): Product? {
+    suspend fun updateProductToActive(productId: String): ProductDto? {
         return productService.setActiveProduct(productId)
     }
 }
-
-data class CreateProductInput(
-    val productName: String,
-    val productPrice: Int,
-    val productPictureUrl: String
-)

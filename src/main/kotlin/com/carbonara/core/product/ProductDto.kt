@@ -4,7 +4,7 @@ import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.scalars.ID
 
 @GraphQLDescription("A food box for customers")
-class Product (
+data class ProductDto (
 
     @GraphQLDescription("Unique identifier of a product")
     val productId: ID,
