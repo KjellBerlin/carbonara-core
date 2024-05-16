@@ -14,8 +14,9 @@ data class ProductDao(
     val productPictureUrl: String,
     var isActive: Boolean?
 ) {
-    fun toProduct(): Product {
-        return Product(
+
+    fun toProduct(): ProductDto {
+        return ProductDto(
             productId = ID(productId.toString()),
             productName = productName,
             productPrice = productPrice,
