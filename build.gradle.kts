@@ -39,7 +39,7 @@ dependencies {
 	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.13.10")
+	testImplementation("io.mockk:mockk:1.13.11")
 }
 
 tasks.withType<KotlinCompile> {
