@@ -26,7 +26,7 @@ dependencies {
 	// kotlin logging as wrapper for slf4j
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 	implementation("org.slf4j:slf4j-api:2.0.7")
-	implementation("ch.qos.logback:logback-classic:1.4.14")
+	implementation("ch.qos.logback:logback-classic:1.5.6")
 
 	// GraphQl
 	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
