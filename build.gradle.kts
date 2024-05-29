@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.2.5"
+	id("org.springframework.boot") version "3.3.0"
 	id("io.spring.dependency-management") version "1.1.5"
 
-	kotlin("jvm") version "1.9.24"
-	kotlin("plugin.spring") version "1.9.24"
+	kotlin("jvm") version "2.0.0"
+	kotlin("plugin.spring") version "2.0.0"
 
 	application
 }
@@ -19,27 +19,21 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-	// kotlin logging as wrapper for slf4j
-	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-	implementation("org.slf4j:slf4j-api:2.0.7")
-	implementation("ch.qos.logback:logback-classic:1.4.14")
+	implementation("org.springframework.boot:spring-boot-starter-webflux"){exclude(group = "ch.qos.logback")}
+	implementation("org.slf4j:slf4j-simple:2.0.13")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1"){exclude(group = "ch.qos.logback")}
 
 	// MongoDB
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive"){exclude(group = "ch.qos.logback")}
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb"){exclude(group = "ch.qos.logback")}
 
 	// Auth0
-	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6"){exclude(group = "ch.qos.logback")}
 
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.13.10")
+	testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(group = "ch.qos.logback")}
+	testImplementation("io.mockk:mockk:1.13.11")
 }
 
 tasks.withType<KotlinCompile> {

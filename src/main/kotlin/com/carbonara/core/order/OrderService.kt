@@ -2,8 +2,8 @@ package com.carbonara.core.order
 
 import com.carbonara.core.product.ProductService
 import kotlinx.coroutines.reactor.awaitSingleOrNull
-import mu.KotlinLogging
 import org.bson.types.ObjectId
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -31,6 +31,6 @@ class OrderService(
     }
 
     companion object {
-        private val log = KotlinLogging.logger {}
+        private val log = LoggerFactory.getLogger(OrderService::class.java)
     }
 }
