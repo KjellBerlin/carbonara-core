@@ -29,6 +29,7 @@ class GoogleMapsService {
                 streetNumber = addressComponents[AddressComponentType.STREET_NUMBER]?.longName,
                 postCode = addressComponents[AddressComponentType.POSTAL_CODE]?.longName,
                 city = addressComponents[AddressComponentType.LOCALITY]?.longName,
+                country = addressComponents[AddressComponentType.COUNTRY]?.longName,
                 googlePlaceId = response.placeId
             )
         } catch (e: Exception) {

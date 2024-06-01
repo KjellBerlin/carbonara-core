@@ -39,7 +39,7 @@ class OrderDtoServiceTest {
     }
 
     companion object {
-        val AUTH0_USER_ID = "auth0Id1"
+        const val AUTH0_USER_ID = "auth0Id1"
         val PRODUCT_ID = ObjectId()
         val TEST_PRODUCT = ProductDao(
             productId = PRODUCT_ID,
@@ -56,6 +56,7 @@ class OrderDtoServiceTest {
                 streetNumber = "221B",
                 postCode = "123",
                 city = "London",
+                country = "Germany",
                 googlePlaceId = "sample_google_place_id"
             ),
             productsIds = listOf(PRODUCT_ID.toString())

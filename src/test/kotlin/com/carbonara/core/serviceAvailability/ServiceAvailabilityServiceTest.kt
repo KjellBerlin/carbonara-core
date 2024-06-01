@@ -35,7 +35,6 @@ class ServiceAvailabilityServiceTest {
         assertEquals(expectedResult, result)
         verify(exactly = 1) { googleMapsService.getCompleteAddress(GOOGLE_PLACE_ID)}
         verify(exactly = 1) { googleMapsService.getDistanceToWarehouse(GOOGLE_PLACE_ID) }
-
     }
 
     @Test
@@ -52,16 +51,34 @@ class ServiceAvailabilityServiceTest {
         assertEquals(expectedResult, result)
         verify(exactly = 1) { googleMapsService.getCompleteAddress(GOOGLE_PLACE_ID)}
         verify(exactly = 1) { googleMapsService.getDistanceToWarehouse(GOOGLE_PLACE_ID) }
+    }
 
+    @Test
+    fun `Address properties not complete`() {
+        every { googleMapsService.getCompleteAddress(any()) } returns ADDRESS.copy(streetNumber = null)
+        every { googleMapsService.getDistanceToWarehouse(any()) } returns 5
+
+        val expectedResult = ServiceAvailabilityDto(
+            available = false,
+            addressIncomplete = true,
+            address = null
+        )
+
+        val result = serviceAvailabilityService.checkServiceAvailability(googlePlaceId = GOOGLE_PLACE_ID)
+
+        assertEquals(expectedResult, result)
+        verify(exactly = 1) { googleMapsService.getCompleteAddress(GOOGLE_PLACE_ID)}
+        verify(exactly = 1) { googleMapsService.getDistanceToWarehouse(GOOGLE_PLACE_ID) }
     }
 
     companion object {
         const val GOOGLE_PLACE_ID = "sample_google_place_id"
         val ADDRESS = Address(
-            street = "Sample Street",
-            streetNumber = "11",
+            street = "Baker Street",
+            streetNumber = "221b",
             postCode = "12345",
-            city = "Berlin",
+            city = "London",
+            country = "Great Britain",
             googlePlaceId = GOOGLE_PLACE_ID
         )
     }
