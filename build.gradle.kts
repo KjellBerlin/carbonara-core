@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -22,6 +23,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux"){exclude(group = "ch.qos.logback")}
 	implementation("org.slf4j:slf4j-simple:2.0.13")
 
+	// Necessary for asynchronous code
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+
 	// GraphQl
 	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1"){exclude(group = "ch.qos.logback")}
 
@@ -32,14 +36,17 @@ dependencies {
 	// Auth0
 	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6"){exclude(group = "ch.qos.logback")}
 
+	// Google places
+	implementation("com.google.maps:google-maps-services:2.2.0"){exclude(group = "ch.qos.logback")}
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(group = "ch.qos.logback")}
 	testImplementation("io.mockk:mockk:1.13.11")
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "17"
+	compilerOptions {
+		freeCompilerArgs.add("-Xjsr305=strict")
+		jvmTarget.set(JvmTarget.JVM_17)
 	}
 }
 

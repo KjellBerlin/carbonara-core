@@ -1,5 +1,6 @@
 package com.carbonara.core.order
 
+import com.carbonara.core.address.Address
 import com.carbonara.core.product.ProductDao
 import com.expediagroup.graphql.generator.scalars.ID
 import org.bson.types.ObjectId
@@ -24,11 +25,3 @@ data class OrderDao(
         )
     }
 }
-
-data class Address(
-    val name: String,
-    val street: String,
-    val streetNumber: String,
-    val postCode: String,
-    val city: String
-)
