@@ -1,5 +1,6 @@
 package com.carbonara.core.order
 
+import com.carbonara.core.address.Address
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
 import io.mockk.coEvery
@@ -54,7 +55,8 @@ class OrderDtoServiceTest {
                 street = "Baker Street",
                 streetNumber = "221B",
                 postCode = "123",
-                city = "London"
+                city = "London",
+                googlePlaceId = "sample_google_place_id"
             ),
             productsIds = listOf(PRODUCT_ID.toString())
         )

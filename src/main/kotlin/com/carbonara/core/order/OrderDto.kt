@@ -1,5 +1,6 @@
 package com.carbonara.core.order
 
+import com.carbonara.core.address.Address
 import com.carbonara.core.product.ProductDto
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.scalars.ID
