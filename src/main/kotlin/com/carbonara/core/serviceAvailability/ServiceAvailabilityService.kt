@@ -15,15 +15,25 @@ class ServiceAvailabilityService(
         val address = async { googleMapsService.getCompleteAddress(googlePlaceId) }.await()
         val distanceInMeters = async { googleMapsService.getDistanceToWarehouse(googlePlaceId) }.await()
 
-        if (distanceInMeters <= deliveryRadiusInMeters) {
-            ServiceAvailabilityDto(
-                available = true,
-                address = address
-            )
-        } else {
-            ServiceAvailabilityDto(
-                available = false
-            )
+        when {
+            !address.addressPropertiesComplete() -> {
+                ServiceAvailabilityDto(
+                    available = false,
+                    addressIncomplete = true
+                )
+            }
+            distanceInMeters <= deliveryRadiusInMeters -> {
+                ServiceAvailabilityDto(
+                    available = true,
+                    address = address
+                )
+            }
+            else -> {
+                ServiceAvailabilityDto(
+                    available = false
+                )
+            }
         }
     }
+
 }
