@@ -39,7 +39,8 @@ class OrderDtoServiceTest {
     }
 
     companion object {
-        const val AUTH0_USER_ID = "auth0Id1"
+        private const val AUTH0_USER_ID = "auth0Id1"
+        private const val USER_NAME = "Mr Bean"
         val PRODUCT_ID = ObjectId()
         val TEST_PRODUCT = ProductDao(
             productId = PRODUCT_ID,
@@ -50,6 +51,7 @@ class OrderDtoServiceTest {
         )
         val CREATE_ORDER_INPUT = CreateOrderInput(
             auth0UserId = AUTH0_USER_ID,
+            userName = USER_NAME,
             deliveryAddress = Address(
                 name = "John Watson",
                 street = "Baker Street",
@@ -59,13 +61,16 @@ class OrderDtoServiceTest {
                 country = "Germany",
                 googlePlaceId = "sample_google_place_id"
             ),
-            productsIds = listOf(PRODUCT_ID.toString())
+            productsIds = listOf(PRODUCT_ID.toString()),
+            additionalDetails = "No additional details"
         )
         val ORDER_DAO = OrderDao(
             orderId = ObjectId(),
             auth0UserId = AUTH0_USER_ID,
+            userName = USER_NAME,
             deliveryAddress = CREATE_ORDER_INPUT.deliveryAddress,
-            products = listOf(TEST_PRODUCT)
+            products = listOf(TEST_PRODUCT),
+            additionalDetails = CREATE_ORDER_INPUT.additionalDetails
         )
     }
 }
