@@ -12,16 +12,20 @@ data class OrderDao(
     @Id
     val orderId: ObjectId,
     val auth0UserId: String,
+    val userName: String,
     val deliveryAddress: Address,
     val products: List<ProductDao>,
+    val additionalDetails: String?
 ) {
 
     fun toOrder(): OrderDto {
         return OrderDto(
             orderId = ID(orderId.toString()),
             auth0UserId = auth0UserId,
+            userName = userName,
             deliveryAddress = deliveryAddress,
-            productDtos = products.map { it.toProduct() }
+            productDtos = products.map { it.toProduct() },
+            additionalDetails = additionalDetails
         )
     }
 }

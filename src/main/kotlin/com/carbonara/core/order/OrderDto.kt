@@ -11,8 +11,12 @@ data class OrderDto (
     val orderId: ID,
     @GraphQLDescription("UserId of user who has placed the order")
     val auth0UserId: String,
+    @GraphQLDescription("User name of user who has placed the order")
+    val userName: String,
     @GraphQLDescription("Delivery address of the order")
     val deliveryAddress: Address,
     @GraphQLDescription("Ordered products")
-    val productDtos: List<ProductDto>
+    val productDtos: List<ProductDto>,
+    @GraphQLDescription("Additional order details")
+    val additionalDetails: String?
 )

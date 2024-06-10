@@ -21,8 +21,10 @@ class OrderService(
             OrderDao(
                 orderId = ObjectId(),
                 auth0UserId = createOrderInput.auth0UserId,
+                userName = createOrderInput.userName,
                 deliveryAddress = createOrderInput.deliveryAddress,
-                products = productDaos
+                products = productDaos,
+                additionalDetails = createOrderInput.additionalDetails
             )
         ).awaitSingleOrNull()?.toOrder()
 
