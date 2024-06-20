@@ -1,5 +1,6 @@
 package com.carbonara.core.payment
 
+import com.carbonara.core.order.OrderService
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -7,16 +8,13 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class MolliePaymentWebhookController(
-    private val molliePaymentService: MolliePaymentService
+    private val orderService: OrderService
 ) {
 
     @PostMapping("/mollie-payment-status")
-    fun handleMollieWebhook(@RequestParam("id") paymentId: String) {
+    suspend fun handleMollieWebhook(@RequestParam("id") paymentId: String) {
         log.info("Webhook received for paymentId: {}", paymentId)
-
-        // TODO: use orderservice instead of molliepaymentservice service to not introduce circular dependency
-
-        molliePaymentService.getMolliePaymentStatus(paymentId)
+        orderService.handleOrderPayment(paymentId)
     }
 
     companion object {

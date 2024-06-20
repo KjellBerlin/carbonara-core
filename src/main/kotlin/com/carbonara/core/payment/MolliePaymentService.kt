@@ -3,10 +3,12 @@ package com.carbonara.core.payment
 import be.woutschoovaerts.mollie.ClientBuilder
 import be.woutschoovaerts.mollie.data.common.Amount
 import be.woutschoovaerts.mollie.data.payment.PaymentRequest
+import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import be.woutschoovaerts.mollie.exception.MollieException
 import com.carbonara.core.constants.currency
 import com.carbonara.core.constants.mollieAPIKey
 import com.carbonara.core.constants.paymentWebhookUrl
+import com.carbonara.core.constants.redirectUrl
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -20,43 +22,37 @@ class MolliePaymentService {
         .withApiKey(mollieAPIKey)
         .build()
 
-    fun createMolliePaymentLink(amountInCents: Int, orderDescription: String, userId: String): MolliePaymentDetails {
+    fun createMolliePaymentLink(amountInCents: Int, orderDescription: String, userId: String): PaymentDetails {
         val amountInEUR = Amount(currency, convertCentsToEuros(amountInCents))
         val paymentRequest = PaymentRequest.builder()
             .amount(amountInEUR)
             .description(orderDescription)
-            .redirectUrl("https://example.com")
+            .redirectUrl(redirectUrl)
             .webhookUrl(Optional.of(paymentWebhookUrl))
             .build()
 
         return try {
             val molliePayment = mollieClient.payments().createPayment(paymentRequest)
             log.info("Created payment for userId={} over amount in cents={} successfully", userId, amountInCents)
-            MolliePaymentDetails(
+            PaymentDetails(
                 paymentId = molliePayment.id,
                 paymentRedirectLink = molliePayment.links.checkout.href,
                 paid = false
             )
-        } catch (e: MollieException) {
-            e.printStackTrace()
-            log.error("Failed to create payment for user={} and amount in cents={}", userId, amountInCents, e)
-            throw PaymentCreationException("Failed to create payment")
+        } catch (ex: MollieException) {
+            log.error("Failed to create payment for user={} and amount in cents={}", userId, amountInCents, ex)
+            throw PaymentException("Failed to create payment")
         }
     }
 
-    fun getMolliePaymentStatus(paymentId: String): Boolean {
-        try {
+    fun getMolliePaymentStatus(paymentId: String): PaymentStatus {
+        return try {
             val molliePayment = mollieClient.payments().getPayment(paymentId)
-
-            /*
             molliePayment.status
-            molliePayment.status == PaymentStatus.PAID
-             */
-
-        } catch (e: MollieException) {
-            e.printStackTrace()
+        } catch (ex: MollieException) {
+            log.error("Failed to retrieve status from mollie for paymentId={}", paymentId, ex)
+            throw PaymentException("Failed to retrieve payment status")
         }
-        return true
     }
 
     private fun convertCentsToEuros(cents: Int): BigDecimal {

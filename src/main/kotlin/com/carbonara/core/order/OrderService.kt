@@ -1,6 +1,8 @@
 package com.carbonara.core.order
 
+import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import com.carbonara.core.payment.MolliePaymentService
+import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -43,6 +45,28 @@ class OrderService(
 
         log.info("Created order with ID={} for user={}", newOrder.orderId, newOrder.auth0UserId)
         return newOrder
+    }
+
+    suspend fun handleOrderPayment(
+        paymentId: String
+    ) {
+        val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)
+
+        if (paymentStatus == PaymentStatus.PAID) {
+
+            val order = orderRepository.findFirstByPaymentId(paymentId).awaitSingleOrNull() ?: run {
+                log.error("Failed to retrieve order for paymentId={}", paymentId)
+                throw PaymentException("Failed to retrieve order for payment")
+            }
+            val updatedOrder = order.copy(paymentDetails = order.paymentDetails.copy(paid = true))
+            orderRepository.save(updatedOrder).awaitSingleOrNull()
+
+            // TODO: trigger delivery
+
+        } else {
+            log.info("Retrieved payment status={} for paymentId={}. Not processing order for now further",
+                paymentStatus, paymentId)
+        }
     }
 
     private fun createPaymentDescription(products: List<ProductDao>): String {

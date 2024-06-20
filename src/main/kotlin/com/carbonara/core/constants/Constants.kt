@@ -6,6 +6,7 @@ const val currency = "EUR"
 
 // Urls
 const val paymentWebhookUrl = "https://example.com"
+const val redirectUrl = "https://redirect-example.com"
 
 // Secrets
 const val googleAPIKey = "AIzaSyBUNIqACbeX2VTDaUZC_1ZsCSMPL6MK2DI"

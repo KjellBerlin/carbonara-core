@@ -1,6 +1,6 @@
 package com.carbonara.core.payment
 
-data class MolliePaymentDetails(
+data class PaymentDetails(
     val paymentRedirectLink: String,
     val paymentId: String,
     val paid: Boolean

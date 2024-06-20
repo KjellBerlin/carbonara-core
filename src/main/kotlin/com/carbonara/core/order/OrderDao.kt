@@ -1,7 +1,7 @@
 package com.carbonara.core.order
 
 import com.carbonara.core.address.Address
-import com.carbonara.core.payment.MolliePaymentDetails
+import com.carbonara.core.payment.PaymentDetails
 import com.carbonara.core.product.ProductDao
 import com.expediagroup.graphql.generator.scalars.ID
 import org.bson.types.ObjectId
@@ -17,7 +17,7 @@ data class OrderDao(
     val deliveryAddress: Address,
     val products: List<ProductDao>,
     val additionalDetails: String?,
-    val paymentDetails: MolliePaymentDetails
+    val paymentDetails: PaymentDetails
 ) {
 
     fun toOrder(): OrderDto {
