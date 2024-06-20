@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 
-class ProductDtoServiceTest {
+class ProductServiceTest {
 
     private lateinit var productService: ProductService
     private lateinit var productRepository: ProductRepository

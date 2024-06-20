@@ -18,5 +18,7 @@ data class OrderDto (
     @GraphQLDescription("Ordered products")
     val productDtos: List<ProductDto>,
     @GraphQLDescription("Additional order details")
-    val additionalDetails: String?
+    val additionalDetails: String?,
+    @GraphQLDescription("Payment redirection link")
+    val paymentRedirectionLink: String
 )
