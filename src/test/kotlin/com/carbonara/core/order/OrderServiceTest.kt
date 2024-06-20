@@ -109,6 +109,19 @@ class OrderServiceTest {
         }
 
         @Test
+        fun `Order already paid`() {
+            every { molliePaymentService.getMolliePaymentStatus(any()) } returns PaymentStatus.PAID
+            coEvery { orderRepository.findFirstByPaymentId(any()) } returns ORDER_DAO_PAID.toMono()
+            coEvery { orderRepository.save(any()) } returns ORDER_DAO_PAID.toMono()
+
+            runBlocking { orderService.handleOrderPayment(PAYMENT_ID) }
+
+            verify(exactly = 1) { molliePaymentService.getMolliePaymentStatus(PAYMENT_ID) }
+            coVerify(exactly = 1) { orderRepository.findFirstByPaymentId(PAYMENT_ID)}
+            coVerify(exactly = 0) { orderRepository.save(ORDER_DAO_PAID) }
+        }
+
+        @Test
         fun `Order can not be found in database`() {
             every { molliePaymentService.getMolliePaymentStatus(any()) } returns PaymentStatus.PAID
             coEvery { orderRepository.findFirstByPaymentId(any()) } returns null.toMono()

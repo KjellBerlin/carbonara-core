@@ -51,18 +51,18 @@ class OrderService(
         paymentId: String
     ) {
         val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)
-
         if (paymentStatus == PaymentStatus.PAID) {
-
             val order = orderRepository.findFirstByPaymentId(paymentId).awaitSingleOrNull() ?: run {
                 log.error("Failed to retrieve order for paymentId={}", paymentId)
                 throw PaymentException("Failed to retrieve order for payment")
             }
-            val updatedOrder = order.copy(paymentDetails = order.paymentDetails.copy(paid = true))
-            orderRepository.save(updatedOrder).awaitSingleOrNull()
 
-            // TODO: trigger delivery
+            if (!order.paymentDetails.paid) {
+                val updatedOrder = order.copy(paymentDetails = order.paymentDetails.copy(paid = true))
+                orderRepository.save(updatedOrder).awaitSingleOrNull()
 
+                // TODO: trigger delivery
+            }
         } else {
             log.info("Retrieved payment status={} for paymentId={}. Not processing order for now further",
                 paymentStatus, paymentId)
