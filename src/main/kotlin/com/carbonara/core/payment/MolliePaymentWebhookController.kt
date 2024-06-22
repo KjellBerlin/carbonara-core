@@ -11,6 +11,8 @@ class MolliePaymentWebhookController(
     private val orderService: OrderService
 ) {
 
+    // Potential dos attack endpoint, introduce rate limiting
+
     @PostMapping("/mollie-payment-status")
     suspend fun handleMollieWebhook(@RequestParam("id") paymentId: String) {
         log.info("Webhook received for paymentId: {}", paymentId)
