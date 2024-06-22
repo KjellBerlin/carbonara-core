@@ -20,26 +20,33 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-webflux"){exclude(group = "ch.qos.logback")}
-	implementation("org.slf4j:slf4j-simple:2.0.13")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+	// logging
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+	implementation("org.slf4j:slf4j-api:2.0.13")
+	implementation("ch.qos.logback:logback-classic:1.4.12")
 
 	// Necessary for asynchronous code
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1"){exclude(group = "ch.qos.logback")}
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
 
 	// MongoDB
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive"){exclude(group = "ch.qos.logback")}
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb"){exclude(group = "ch.qos.logback")}
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
 	// Auth0
-	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6"){exclude(group = "ch.qos.logback")}
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	// Google places
-	implementation("com.google.maps:google-maps-services:2.2.0"){exclude(group = "ch.qos.logback")}
+	implementation("com.google.maps:google-maps-services:2.2.0")
 
-	testImplementation("org.springframework.boot:spring-boot-starter-test"){exclude(group = "ch.qos.logback")}
+	// Mollie
+	implementation("be.woutschoovaerts:mollie:4.3.0")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.13.11")
 }
 
@@ -53,3 +60,4 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
