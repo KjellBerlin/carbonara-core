@@ -28,7 +28,7 @@ dependencies {
 	implementation("ch.qos.logback:logback-classic:1.4.12")
 
 	// Necessary for asynchronous code
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
 	// GraphQl
 	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
