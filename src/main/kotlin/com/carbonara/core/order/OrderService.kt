@@ -9,6 +9,7 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
 import org.bson.types.ObjectId
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 
 @Service
 class OrderService(
@@ -38,7 +39,7 @@ class OrderService(
                 additionalDetails = createOrderInput.additionalDetails,
                 paymentDetails = paymentDetails
             )
-        ).awaitSingleOrNull()?.toOrder() ?: run {
+        ).awaitSingleOrNull()?.toOrderDto() ?: run {
             log.error("Failed to save order for user {} to database", createOrderInput.userName)
             throw OrderCreationException("Failed to create order")
         }
@@ -58,8 +59,15 @@ class OrderService(
             }
 
             if (!order.paymentDetails.paid) {
-                val updatedOrder = order.copy(paymentDetails = order.paymentDetails.copy(paid = true))
-                orderRepository.save(updatedOrder).awaitSingleOrNull()
+                log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
+                val updatedOrder = order.copy(
+                    paymentDetails = order.paymentDetails.copy(paid = true),
+                    updatedAt = OffsetDateTime.now().toString()
+                )
+                orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
+                    log.error("Failed to update payment status to paid for orderId={}", order.orderId)
+                    throw PaymentException("Failed update payment status")
+                }
 
                 // TODO: trigger delivery
             }

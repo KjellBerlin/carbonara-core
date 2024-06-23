@@ -11,6 +11,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.bson.types.ObjectId
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import reactor.kotlin.core.publisher.toMono
+import java.time.OffsetDateTime
 
 class OrderServiceTest {
 
@@ -34,6 +36,9 @@ class OrderServiceTest {
         productService = mockk()
         molliePaymentService = mockk()
         orderService = OrderService(orderRepository, productService, molliePaymentService)
+
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() } returns TIME
     }
 
     @Nested
@@ -46,7 +51,7 @@ class OrderServiceTest {
             every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLILE_PAYMENT_DETAILS
 
             val result = runBlocking { orderService.createOrder(CREATE_ORDER_INPUT) }
-            assertEquals(ORDER_DAO.toOrder(), result)
+            assertEquals(ORDER_DAO.toOrderDto(), result)
 
             coVerify(exactly = 1) { productService.getProductDaosByIds(listOf(PRODUCT_ID.toString())) }
             coVerify(exactly = 1) {
@@ -138,10 +143,11 @@ class OrderServiceTest {
     }
 
     companion object {
+        val TIME: OffsetDateTime = OffsetDateTime.parse("2024-06-01T14:00:00.0+02:00")
         private const val AUTH0_USER_ID = "auth0Id1"
         private const val USER_NAME = "Mr Bean"
         val PRODUCT_ID = ObjectId()
-        val PAYMENT_ID = "tr_123"
+        const val PAYMENT_ID = "tr_123"
         val TEST_PRODUCT = ProductDao(
             productId = PRODUCT_ID,
             productName = "test-product-1",
@@ -176,7 +182,9 @@ class OrderServiceTest {
             deliveryAddress = CREATE_ORDER_INPUT.deliveryAddress,
             products = listOf(TEST_PRODUCT),
             additionalDetails = CREATE_ORDER_INPUT.additionalDetails,
-            paymentDetails = MOLLILE_PAYMENT_DETAILS
+            paymentDetails = MOLLILE_PAYMENT_DETAILS,
+            createdAt = TIME.toString(),
+            updatedAt = TIME.toString()
         )
         val ORDER_DAO_PAID = ORDER_DAO.copy(paymentDetails = ORDER_DAO.paymentDetails.copy(paid = true))
     }
