@@ -1,12 +1,13 @@
 package com.carbonara.core.payment
 
+import be.woutschoovaerts.mollie.Client
 import be.woutschoovaerts.mollie.ClientBuilder
 import be.woutschoovaerts.mollie.data.common.Amount
 import be.woutschoovaerts.mollie.data.payment.PaymentRequest
 import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import be.woutschoovaerts.mollie.exception.MollieException
 import com.carbonara.core.constants.currency
-import com.carbonara.core.constants.mollieAPIKey
+import jakarta.annotation.PostConstruct
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -17,15 +18,23 @@ import java.util.*
 @Service
 class MolliePaymentService {
 
+    @Value("\${mollie.apiKey}")
+    lateinit var apiKey: String
+
     @Value("\${mollie.redirectUrl}")
     lateinit var redirectUrl: String
 
     @Value("\${mollie.paymentWebhookUrl}")
     lateinit var paymentWebhookUrl: String
 
-    private val mollieClient = ClientBuilder()
-        .withApiKey(mollieAPIKey)
-        .build()
+    lateinit var mollieClient: Client
+
+    @PostConstruct
+    fun init() {
+        mollieClient = ClientBuilder()
+            .withApiKey(apiKey)
+            .build()
+    }
 
     fun createMolliePaymentLink(amountInCents: Int, orderDescription: String, userId: String): PaymentDetails {
         val amountInEUR = Amount(currency, convertCentsToEuros(amountInCents))

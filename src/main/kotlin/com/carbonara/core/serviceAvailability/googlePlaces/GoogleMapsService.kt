@@ -1,7 +1,6 @@
 package com.carbonara.core.serviceAvailability.googlePlaces
 
 import com.carbonara.core.address.Address
-import com.carbonara.core.constants.googleAPIKey
 import com.carbonara.core.constants.warehouseGooglePlaceId
 import com.carbonara.core.order.OrderService
 import com.google.maps.DistanceMatrixApi
@@ -9,19 +8,29 @@ import com.google.maps.GeoApiContext
 import com.google.maps.PlacesApi
 import com.google.maps.model.AddressComponentType
 import com.google.maps.model.TravelMode
+import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class GoogleMapsService {
 
-    private val context: GeoApiContext = GeoApiContext.Builder()
-        .apiKey(googleAPIKey)
-        .build()
+    @Value("\${google.apiKey}")
+    lateinit var googleAPIKey: String
+
+    lateinit var geoApiContext: GeoApiContext
+
+    @PostConstruct
+    fun init() {
+        geoApiContext = GeoApiContext.Builder()
+            .apiKey(googleAPIKey)
+            .build()
+    }
 
     fun getCompleteAddress(placeId: String): Address {
         return try {
-            val response = PlacesApi.placeDetails(context, placeId).await()
+            val response = PlacesApi.placeDetails(geoApiContext, placeId).await()
             val addressComponents = response.addressComponents.associateBy { it.types.first() }
 
             Address(
@@ -40,7 +49,7 @@ class GoogleMapsService {
 
     fun getDistanceToWarehouse(destinationPlaceId: String): Long {
         return try {
-            val request = DistanceMatrixApi.newRequest(context)
+            val request = DistanceMatrixApi.newRequest(geoApiContext)
                 .origins("place_id:$warehouseGooglePlaceId")
                 .destinations("place_id:$destinationPlaceId")
                 .mode(TravelMode.BICYCLING) // You can change the mode to WALKING, BICYCLING, TRANSIT, etc.

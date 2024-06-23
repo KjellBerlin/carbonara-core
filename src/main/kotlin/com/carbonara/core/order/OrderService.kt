@@ -53,21 +53,10 @@ class OrderService(
     ) {
         val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)
         if (paymentStatus == PaymentStatus.PAID) {
-            val order = orderRepository.findFirstByPaymentId(paymentId).awaitSingleOrNull() ?: run {
-                log.error("Failed to retrieve order for paymentId={}", paymentId)
-                throw PaymentException("Failed to retrieve order for payment")
-            }
+            val order = retrieveOrderFromDatabase(paymentId)
 
             if (!order.paymentDetails.paid) {
-                log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
-                val updatedOrder = order.copy(
-                    paymentDetails = order.paymentDetails.copy(paid = true),
-                    updatedAt = OffsetDateTime.now().toString()
-                )
-                orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
-                    log.error("Failed to update payment status to paid for orderId={}", order.orderId)
-                    throw PaymentException("Failed update payment status")
-                }
+                updateOrderToPaid(order, paymentStatus)
 
                 // TODO: trigger delivery
             }
@@ -87,6 +76,25 @@ class OrderService(
 
     private fun calculateTotalPrice(products: List<ProductDao>): Int {
         return products.sumOf { it.productPrice }
+    }
+
+    private suspend fun retrieveOrderFromDatabase(paymentId: String): OrderDao {
+        return orderRepository.findFirstByPaymentId(paymentId).awaitSingleOrNull() ?: run {
+            log.error("Failed to retrieve order for paymentId={}", paymentId)
+            throw PaymentException("Failed to retrieve order for payment")
+        }
+    }
+
+    private suspend fun updateOrderToPaid(order: OrderDao, paymentStatus: PaymentStatus) {
+        log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
+        val updatedOrder = order.copy(
+            paymentDetails = order.paymentDetails.copy(paid = true),
+            updatedAt = OffsetDateTime.now().toString()
+        )
+        orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
+            log.error("Failed to update payment status to paid for orderId={}", order.orderId)
+            throw PaymentException("Failed to update payment status")
+        }
     }
 
     companion object {
