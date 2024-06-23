@@ -7,6 +7,7 @@ import com.expediagroup.graphql.generator.scalars.ID
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.OffsetDateTime
 
 @Document("Order")
 data class OrderDao(
@@ -17,10 +18,12 @@ data class OrderDao(
     val deliveryAddress: Address,
     val products: List<ProductDao>,
     val additionalDetails: String?,
-    val paymentDetails: PaymentDetails
+    val paymentDetails: PaymentDetails,
+    val createdAt: String = OffsetDateTime.now().toString(),
+    val updatedAt: String = OffsetDateTime.now().toString()
 ) {
 
-    fun toOrder(): OrderDto {
+    fun toOrderDto(): OrderDto {
         return OrderDto(
             orderId = ID(orderId.toString()),
             auth0UserId = auth0UserId,
