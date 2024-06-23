@@ -7,9 +7,8 @@ import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import be.woutschoovaerts.mollie.exception.MollieException
 import com.carbonara.core.constants.currency
 import com.carbonara.core.constants.mollieAPIKey
-import com.carbonara.core.constants.paymentWebhookUrl
-import com.carbonara.core.constants.redirectUrl
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -17,6 +16,12 @@ import java.util.*
 
 @Service
 class MolliePaymentService {
+
+    @Value("\${mollie.redirectUrl}")
+    lateinit var redirectUrl: String
+
+    @Value("\${mollie.paymentWebhookUrl}")
+    lateinit var paymentWebhookUrl: String
 
     private val mollieClient = ClientBuilder()
         .withApiKey(mollieAPIKey)
@@ -40,7 +45,7 @@ class MolliePaymentService {
                 paid = false
             )
         } catch (ex: MollieException) {
-            log.error("Failed to create payment for user={} and amount in cents={}", userId, amountInCents, ex)
+            log.error("Failed to create payment for user={} and amount in cents={}, details={}", userId, amountInCents, ex.details)
             throw PaymentException("Failed to create payment")
         }
     }
