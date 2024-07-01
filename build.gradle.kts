@@ -31,7 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.3")
 
 	// MongoDB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
