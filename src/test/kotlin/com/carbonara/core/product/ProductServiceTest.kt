@@ -27,7 +27,9 @@ class ProductServiceTest {
         val createProductInput = CreateProductInput(
             productName = TEST_PRODUCT_1_NOT_ACTIVE.productName,
             productPrice = TEST_PRODUCT_1_NOT_ACTIVE.productPrice,
-            productPictureUrl = TEST_PRODUCT_1_NOT_ACTIVE.productPictureUrl
+            productPictureUrl = TEST_PRODUCT_1_NOT_ACTIVE.productPictureUrl,
+            shortProductDescription = TEST_PRODUCT_1_NOT_ACTIVE.shortProductDescription,
+            longProductDescription = TEST_PRODUCT_1_NOT_ACTIVE.longProductDescription,
         )
 
         every {
@@ -45,6 +47,8 @@ class ProductServiceTest {
                             && it.productPrice == TEST_PRODUCT_1_NOT_ACTIVE.productPrice
                             && it.productPictureUrl == TEST_PRODUCT_1_NOT_ACTIVE.productPictureUrl
                             && it.isActive == TEST_PRODUCT_1_NOT_ACTIVE.isActive
+                            && it.shortProductDescription == TEST_PRODUCT_1_NOT_ACTIVE.shortProductDescription
+                            && it.longProductDescription == TEST_PRODUCT_1_NOT_ACTIVE.longProductDescription
                 }
             )
         }
@@ -116,28 +120,20 @@ class ProductServiceTest {
             productName = "test-product-1",
             productPrice = 1000,
             productPictureUrl = "https://example.com",
-            isActive = false
+            isActive = false,
+            shortProductDescription = "Short description",
+            longProductDescription = "Long description"
         )
-        val TEST_PRODUCT_1_ACTIVE = ProductDao(
-            productId = TEST_PRODUCT_1_NOT_ACTIVE.productId,
-            productName = "test-product-1",
-            productPrice = 1000,
-            productPictureUrl = "https://example.com",
-            isActive = true
-        )
+        val TEST_PRODUCT_1_ACTIVE = TEST_PRODUCT_1_NOT_ACTIVE.copy(isActive = true)
         val TEST_PRODUCT_2_NOT_ACTIVE = ProductDao(
             productId = ObjectId(),
             productName = "test-product-2",
             productPrice = 1100,
             productPictureUrl = "https://example.com",
-            isActive = false
+            isActive = false,
+            shortProductDescription = "Short description",
+            longProductDescription = "Long description"
         )
-        val TEST_PRODUCT_2_ACTIVE = ProductDao(
-            productId = TEST_PRODUCT_2_NOT_ACTIVE.productId,
-            productName = "test-product-2",
-            productPrice = 1100,
-            productPictureUrl = "https://example.com",
-            isActive = true
-        )
+        val TEST_PRODUCT_2_ACTIVE = TEST_PRODUCT_2_NOT_ACTIVE.copy(isActive = true)
     }
 }

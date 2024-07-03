@@ -29,7 +29,7 @@ data class OrderDao(
             auth0UserId = auth0UserId,
             userName = userName,
             deliveryAddress = deliveryAddress,
-            productDtos = products.map { it.toProduct() },
+            productDtos = products.map { it.toProductDao() },
             additionalDetails = additionalDetails,
             paymentRedirectionLink = paymentDetails.paymentRedirectLink
         )

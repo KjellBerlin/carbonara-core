@@ -11,11 +11,11 @@ class ProductService(
 ) {
 
     suspend fun getAllProducts(): List<ProductDto> {
-        return productRepository.findAll().collectList().awaitSingleOrNull()?.map { it.toProduct() } ?: emptyList()
+        return productRepository.findAll().collectList().awaitSingleOrNull()?.map { it.toProductDao() } ?: emptyList()
     }
 
     suspend fun getActiveProduct(): ProductDto? {
-        return productRepository.findFirstByIsActiveIsTrue().awaitSingleOrNull()?.toProduct()
+        return productRepository.findFirstByIsActiveIsTrue().awaitSingleOrNull()?.toProductDao()
     }
 
     suspend fun createProduct(
@@ -27,9 +27,11 @@ class ProductService(
                 productName = createProductInput.productName,
                 productPrice = createProductInput.productPrice,
                 productPictureUrl = createProductInput.productPictureUrl,
-                isActive = false
+                isActive = false,
+                shortProductDescription = createProductInput.shortProductDescription,
+                longProductDescription = createProductInput.longProductDescription,
             )
-        ).awaitSingleOrNull()?.toProduct()
+        ).awaitSingleOrNull()?.toProductDao()
 
         log.info("Created new product with ID={}", newProduct?.productId)
         return newProduct
@@ -48,7 +50,7 @@ class ProductService(
         newActiveProduct.isActive = true
 
         log.info("New active product is the product with productID={}", newActiveProduct.productId)
-        return productRepository.save(newActiveProduct).awaitSingleOrNull()?.toProduct()
+        return productRepository.save(newActiveProduct).awaitSingleOrNull()?.toProductDao()
             ?: throw Exception("Can not save new active product")
     }
 
