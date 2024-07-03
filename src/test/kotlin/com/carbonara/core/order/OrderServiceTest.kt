@@ -48,7 +48,7 @@ class OrderServiceTest {
         fun `Happy case`() {
             coEvery { productService.getProductDaosByIds(any()) } returns listOf(TEST_PRODUCT)
             every { orderRepository.save(any()) } returns ORDER_DAO.toMono()
-            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLILE_PAYMENT_DETAILS
+            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLIE_PAYMENT_DETAILS
 
             val result = runBlocking { orderService.createOrder(CREATE_ORDER_INPUT) }
             assertEquals(ORDER_DAO.toOrderDto(), result)
@@ -67,7 +67,7 @@ class OrderServiceTest {
         fun `Null return form database`() {
             coEvery { productService.getProductDaosByIds(any()) } returns listOf(TEST_PRODUCT)
             every { orderRepository.save(any()) } returns null.toMono()
-            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLILE_PAYMENT_DETAILS
+            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLIE_PAYMENT_DETAILS
 
             assertThrows<OrderCreationException> {
                 runBlocking { orderService.createOrder(CREATE_ORDER_INPUT) }
@@ -153,7 +153,9 @@ class OrderServiceTest {
             productName = "test-product-1",
             productPrice = 1000,
             productPictureUrl = "https://example.com",
-            isActive = true
+            isActive = true,
+            shortProductDescription = "Short description",
+            longProductDescription = "Long description"
         )
         val CREATE_ORDER_INPUT = CreateOrderInput(
             auth0UserId = AUTH0_USER_ID,
@@ -170,7 +172,7 @@ class OrderServiceTest {
             productsIds = listOf(PRODUCT_ID.toString()),
             additionalDetails = "No additional details"
         )
-        val MOLLILE_PAYMENT_DETAILS = PaymentDetails(
+        val MOLLIE_PAYMENT_DETAILS = PaymentDetails(
             paymentId = PAYMENT_ID,
             paymentRedirectLink = "https://example.com",
             paid = false
@@ -182,7 +184,7 @@ class OrderServiceTest {
             deliveryAddress = CREATE_ORDER_INPUT.deliveryAddress,
             products = listOf(TEST_PRODUCT),
             additionalDetails = CREATE_ORDER_INPUT.additionalDetails,
-            paymentDetails = MOLLILE_PAYMENT_DETAILS,
+            paymentDetails = MOLLIE_PAYMENT_DETAILS,
             createdAt = TIME.toString(),
             updatedAt = TIME.toString()
         )

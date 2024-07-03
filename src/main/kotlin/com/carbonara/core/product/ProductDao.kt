@@ -12,16 +12,20 @@ data class ProductDao(
     val productName: String,
     val productPrice: Int,
     val productPictureUrl: String,
-    var isActive: Boolean?
+    var isActive: Boolean?,
+    val shortProductDescription: String,
+    val longProductDescription: String
 ) {
 
-    fun toProduct(): ProductDto {
+    fun toProductDao(): ProductDto {
         return ProductDto(
             productId = ID(productId.toString()),
             productName = productName,
             productPrice = productPrice,
             productPictureUrl = productPictureUrl,
-            isActive = isActive ?: false
+            isActive = isActive ?: false,
+            shortProductDescription = shortProductDescription,
+            longProductDescription = longProductDescription
         )
     }
 }
