@@ -1,13 +1,9 @@
 package com.carbonara.core
 
-import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class CoreApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
-
+	// No test to be able to run application without secrets when building docker image
 }
