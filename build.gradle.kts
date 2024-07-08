@@ -38,7 +38,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
 	// Auth0
-	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.7")
 
 	// Google Cloud secret manager
 	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.4.3")
