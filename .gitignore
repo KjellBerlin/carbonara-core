@@ -1,37 +1,17 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Ignore all log files
+*.log
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# Ignore all .tmp files
+*.tmp
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+# Ignore the build directory
+/build
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Ignore the .gradle directory
+/.gradle
 
-### VS Code ###
-.vscode/
+# Ignore the .idea directory
+/.idea
+
+# Ignore properties file being used for local development
+/src/main/resources/application-dev.properties
