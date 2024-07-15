@@ -41,7 +41,7 @@ dependencies {
 	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
 
 	// Google Cloud secret manager
-	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.4.3")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.5.0")
 
 	// Google places
 	implementation("com.google.maps:google-maps-services:2.2.0")
