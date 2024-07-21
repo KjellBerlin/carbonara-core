@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.3.0"
-	id("io.spring.dependency-management") version "1.1.5"
+	id("org.springframework.boot") version "3.3.1"
+	id("io.spring.dependency-management") version "1.1.6"
 
 	kotlin("jvm") version "2.0.0"
 	kotlin("plugin.spring") version "2.0.0"
@@ -31,17 +31,17 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
 	// GraphQl
-	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.1")
+	implementation("com.expediagroup:graphql-kotlin-spring-server:8.0.0-alpha.3")
 
 	// MongoDB
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
 	// Auth0
-	implementation("com.okta.spring:okta-spring-boot-starter:3.0.6")
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.7")
 
 	// Google Cloud secret manager
-	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.4.3")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager:5.5.0")
 
 	// Google places
 	implementation("com.google.maps:google-maps-services:2.2.0")
