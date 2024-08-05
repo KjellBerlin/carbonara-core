@@ -67,7 +67,7 @@ class OrderService(
         }
     }
 
-    suspend fun getOrdersByUserId(
+    suspend fun getOrdersByAuth0UserId(
         auth0UserId: String
     ): List<OrderDto> {
         return orderRepository.findAllByAuth0UserId(auth0UserId)
