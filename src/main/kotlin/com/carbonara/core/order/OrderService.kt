@@ -37,7 +37,8 @@ class OrderService(
                 deliveryAddress = createOrderInput.deliveryAddress,
                 products = productDaos,
                 additionalDetails = createOrderInput.additionalDetails,
-                paymentDetails = paymentDetails
+                paymentDetails = paymentDetails,
+                orderStatus = OrderStatus.PROCESSING_ORDER
             )
         ).awaitSingleOrNull()?.toOrderDto() ?: run {
             log.error("Failed to save order for user {} to database", createOrderInput.userName)
@@ -64,6 +65,15 @@ class OrderService(
             log.info("Retrieved payment status={} for paymentId={}. Not processing order for now further",
                 paymentStatus, paymentId)
         }
+    }
+
+    suspend fun getOrdersByUserId(
+        auth0UserId: String
+    ): List<OrderDto> {
+        return orderRepository.findAllByAuth0UserId(auth0UserId)
+            .awaitSingleOrNull()
+            ?.map { it.toOrderDto() }
+            ?: emptyList()
     }
 
     private fun createPaymentDescription(products: List<ProductDao>): String {
