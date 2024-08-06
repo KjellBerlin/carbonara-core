@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import reactor.kotlin.core.publisher.toFlux
 import reactor.kotlin.core.publisher.toMono
 import java.time.OffsetDateTime
 
@@ -147,7 +148,7 @@ class OrderServiceTest {
 
         @Test
         fun `Happy case`() {
-            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toMono()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toFlux()
 
             val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(listOf(ORDER_DAO.toOrderDto()), result)
@@ -157,7 +158,7 @@ class OrderServiceTest {
 
         @Test
         fun `No orders found`() {
-            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns emptyList<OrderDao>().toMono()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns emptyList<OrderDao>().toFlux()
 
             val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(emptyList<OrderDao>(), result)

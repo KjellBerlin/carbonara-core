@@ -71,9 +71,7 @@ class OrderService(
         auth0UserId: String
     ): List<OrderDto> {
         return orderRepository.findAllByAuth0UserIdAndPaid(auth0UserId)
-            .awaitSingleOrNull()
-            ?.map { it.toOrderDto() }
-            ?: emptyList()
+            .collectList().awaitSingleOrNull()?.map { it.toOrderDto() } ?: emptyList()
     }
 
     private fun createPaymentDescription(products: List<ProductDao>): String {
