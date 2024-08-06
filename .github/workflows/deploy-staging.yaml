@@ -28,6 +28,9 @@ jobs:
       - name: Configure gcloud
         run: gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
 
+      - name: Authenticate Docker to Google Artifact Registry
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev
+
       - name: Build with Gradle
         run: ./gradlew build
 
