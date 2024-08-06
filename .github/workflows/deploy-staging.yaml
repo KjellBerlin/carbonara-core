@@ -46,7 +46,7 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
         run: |
           gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }} \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA} \
+            --image europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA} \
             --platform managed \
             --region europe-west1 \
             --allow-unauthenticated \
@@ -55,4 +55,4 @@ jobs:
       - name: Clean up
         env:
           GITHUB_SHA: ${{ github.sha }}
-        run: docker rmi gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA}
+        run: docker rmi europe-west3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA}
