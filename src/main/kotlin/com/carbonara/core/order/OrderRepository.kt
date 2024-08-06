@@ -10,6 +10,6 @@ interface OrderRepository: ReactiveMongoRepository<OrderDao, ObjectId> {
     @Query("{'paymentDetails.paymentId': ?0}")
     fun findFirstByPaymentId(paymentId: String): Mono<OrderDao>
 
-    @Query("{'auth0UserId': ?0}")
-    fun findAllByAuth0UserId(auth0UserId: String): Mono<List<OrderDao>>
+    @Query("{'auth0UserId': ?0, 'paymentDetails.paid': true}")
+    fun findAllByAuth0UserIdAndPaid(auth0UserId: String): Mono<List<OrderDao>>
 }

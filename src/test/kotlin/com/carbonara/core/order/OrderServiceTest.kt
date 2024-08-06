@@ -147,22 +147,22 @@ class OrderServiceTest {
 
         @Test
         fun `Happy case`() {
-            coEvery { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toMono()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toMono()
 
-            val result = runBlocking { orderService.getOrdersByAuth0UserId(AUTH0_USER_ID) }
+            val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(listOf(ORDER_DAO.toOrderDto()), result)
 
-            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) }
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) }
         }
 
         @Test
         fun `No orders found`() {
-            coEvery { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) } returns emptyList<OrderDao>().toMono()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns emptyList<OrderDao>().toMono()
 
-            val result = runBlocking { orderService.getOrdersByAuth0UserId(AUTH0_USER_ID) }
+            val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(emptyList<OrderDao>(), result)
 
-            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) }
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) }
         }
     }
 

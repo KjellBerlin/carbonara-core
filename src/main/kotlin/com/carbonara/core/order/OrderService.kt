@@ -67,10 +67,10 @@ class OrderService(
         }
     }
 
-    suspend fun getOrdersByAuth0UserId(
+    suspend fun getPaidOrdersByAuth0UserId(
         auth0UserId: String
     ): List<OrderDto> {
-        return orderRepository.findAllByAuth0UserId(auth0UserId)
+        return orderRepository.findAllByAuth0UserIdAndPaid(auth0UserId)
             .awaitSingleOrNull()
             ?.map { it.toOrderDto() }
             ?: emptyList()

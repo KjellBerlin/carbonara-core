@@ -9,8 +9,8 @@ class OrderQuery(
     private val orderService: OrderService
 ): Query {
 
-    @GraphQLDescription("Get all orders for a user")
-    suspend fun getOrdersByUserId(userId: String): List<OrderDto> {
-        return orderService.getOrdersByAuth0UserId(userId)
+    @GraphQLDescription("Get all paid orders of an user")
+    suspend fun getOrdersByUserIdAndPaid(userId: String): List<OrderDto> {
+        return orderService.getPaidOrdersByAuth0UserId(userId)
     }
 }
