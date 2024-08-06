@@ -142,6 +142,30 @@ class OrderServiceTest {
         }
     }
 
+    @Nested
+    inner class GetOrdersByAuth0UserIdTests {
+
+        @Test
+        fun `Happy case`() {
+            coEvery { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toMono()
+
+            val result = runBlocking { orderService.getOrdersByAuth0UserId(AUTH0_USER_ID) }
+            assertEquals(listOf(ORDER_DAO.toOrderDto()), result)
+
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) }
+        }
+
+        @Test
+        fun `No orders found`() {
+            coEvery { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) } returns emptyList<OrderDao>().toMono()
+
+            val result = runBlocking { orderService.getOrdersByAuth0UserId(AUTH0_USER_ID) }
+            assertEquals(emptyList<OrderDao>(), result)
+
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserId(AUTH0_USER_ID) }
+        }
+    }
+
     companion object {
         val TIME: OffsetDateTime = OffsetDateTime.parse("2024-06-01T14:00:00.0+02:00")
         private const val AUTH0_USER_ID = "auth0Id1"
@@ -185,6 +209,7 @@ class OrderServiceTest {
             products = listOf(TEST_PRODUCT),
             additionalDetails = CREATE_ORDER_INPUT.additionalDetails,
             paymentDetails = MOLLIE_PAYMENT_DETAILS,
+            orderStatus = OrderStatus.PROCESSING_ORDER,
             createdAt = TIME.toString(),
             updatedAt = TIME.toString()
         )

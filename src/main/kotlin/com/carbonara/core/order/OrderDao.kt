@@ -19,6 +19,7 @@ data class OrderDao(
     val products: List<ProductDao>,
     val additionalDetails: String?,
     val paymentDetails: PaymentDetails,
+    val orderStatus: OrderStatus,
     val createdAt: String = OffsetDateTime.now().toString(),
     val updatedAt: String = OffsetDateTime.now().toString()
 ) {
@@ -31,7 +32,8 @@ data class OrderDao(
             deliveryAddress = deliveryAddress,
             productDtos = products.map { it.toProductDao() },
             additionalDetails = additionalDetails,
-            paymentRedirectionLink = paymentDetails.paymentRedirectLink
+            paymentRedirectionLink = paymentDetails.paymentRedirectLink,
+            orderStatus = orderStatus
         )
     }
 }
