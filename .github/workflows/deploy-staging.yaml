@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud
+name: Deploy Staging
 
 on:
   push:
