@@ -3,6 +3,7 @@ package com.carbonara.core.order
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface OrderRepository: ReactiveMongoRepository<OrderDao, ObjectId> {
@@ -11,5 +12,5 @@ interface OrderRepository: ReactiveMongoRepository<OrderDao, ObjectId> {
     fun findFirstByPaymentId(paymentId: String): Mono<OrderDao>
 
     @Query("{'auth0UserId': ?0, 'paymentDetails.paid': true}")
-    fun findAllByAuth0UserIdAndPaid(auth0UserId: String): Mono<List<OrderDao>>
+    fun findAllByAuth0UserIdAndPaid(auth0UserId: String): Flux<OrderDao>
 }
