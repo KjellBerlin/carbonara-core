@@ -143,7 +143,7 @@ class OrderServiceTest {
     }
 
     @Nested
-    inner class GetOrdersByAuth0UserIdTests {
+    inner class GetPaidOrdersByAuth0UserIdTests {
 
         @Test
         fun `Happy case`() {
