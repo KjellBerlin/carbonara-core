@@ -32,18 +32,24 @@ jobs:
         run: ./gradlew build
 
       - name: Build Docker image
+        env:
+          GITHUB_SHA: ${{ github.sha }}
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:$GITHUB_SHA .
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:$GITHUB_SHA
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA} .
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA}
 
       - name: Deploy to Cloud Run
+        env:
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }} \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:$GITHUB_SHA \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA} \
             --platform managed \
             --region europe-west1 \
             --allow-unauthenticated \
             --set-env-vars SPRING_PROFILES_ACTIVE=staging
 
       - name: Clean up
-        run: docker rmi gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:$GITHUB_SHA
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+        run: docker rmi gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/carbonara-core:${GITHUB_SHA}
