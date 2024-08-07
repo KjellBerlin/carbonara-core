@@ -33,7 +33,8 @@ data class OrderDao(
             productDtos = products.map { it.toProductDao() },
             additionalDetails = additionalDetails,
             paymentRedirectionLink = paymentDetails.paymentRedirectLink,
-            orderStatus = orderStatus
+            orderStatus = orderStatus,
+            createdAt = createdAt
         )
     }
 }
