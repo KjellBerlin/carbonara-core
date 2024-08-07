@@ -38,7 +38,7 @@ class OrderService(
                 products = productDaos,
                 additionalDetails = createOrderInput.additionalDetails,
                 paymentDetails = paymentDetails,
-                orderStatus = OrderStatus.PROCESSING_ORDER
+                orderStatus = OrderStatus.NONE
             )
         ).awaitSingleOrNull()?.toOrderDto() ?: run {
             log.error("Failed to save order for user {} to database", createOrderInput.userName)
@@ -97,7 +97,8 @@ class OrderService(
         log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
         val updatedOrder = order.copy(
             paymentDetails = order.paymentDetails.copy(paid = true),
-            updatedAt = OffsetDateTime.now().toString()
+            updatedAt = OffsetDateTime.now().toString(),
+            orderStatus = OrderStatus.PROCESSING_ORDER
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to paid for orderId={}", order.orderId)

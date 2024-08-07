@@ -22,5 +22,7 @@ data class OrderDto (
     @GraphQLDescription("Payment redirection link")
     val paymentRedirectionLink: String,
     @GraphQLDescription("Order status")
-    val orderStatus: OrderStatus
+    val orderStatus: OrderStatus,
+    @GraphQLDescription("Creation date of the order")
+    val createdAt: String,
 )
