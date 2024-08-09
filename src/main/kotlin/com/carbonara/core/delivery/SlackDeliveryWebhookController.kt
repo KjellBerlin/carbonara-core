@@ -13,12 +13,11 @@ class SlackDeliveryWebhookController(
 
     // Potential dos attack endpoint, introduce rate limiting
 
-    @PostMapping("/slack-delivery-status", consumes = ["application/json"])
+    @PostMapping("/slack-delivery-status")
     suspend fun handleSlackWebhook(@RequestParam("payload") payload: String) {
         log.info("--Start Slack--")
         log.info(payload)
         log.info("--End Slack--")
-
     }
 
     companion object {
