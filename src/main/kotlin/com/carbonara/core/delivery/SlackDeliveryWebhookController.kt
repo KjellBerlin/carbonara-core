@@ -13,10 +13,10 @@ class SlackDeliveryWebhookController(
 
     // Potential dos attack endpoint, introduce rate limiting
 
-    @PostMapping("/slack-delivery-status")
-    suspend fun handleSlackWebhook(@RequestParam("payload") payload: String) {
+    @PostMapping("/slack-delivery-status", "application/x-www-form-urlencoded")
+    suspend fun handleSlackWebhook(payload: SlackWebhookRequestBody) {
         log.info("--Start Slack--")
-        log.info(payload)
+        log.info(payload.payload)
         log.info("--End Slack--")
     }
 
@@ -24,3 +24,7 @@ class SlackDeliveryWebhookController(
         private val log = KotlinLogging.logger {}
     }
 }
+
+data class SlackWebhookRequestBody(
+    val payload: String
+)
