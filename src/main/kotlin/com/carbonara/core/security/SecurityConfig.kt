@@ -21,6 +21,7 @@ class SecurityConfig {
             .authorizeExchange { exchanges ->
                 exchanges
                     .pathMatchers("/mollie-payment-status").permitAll()
+                    .pathMatchers("/slack-delivery-status").permitAll()
                     .anyExchange().authenticated()
             }
             .oauth2ResourceServer { oauth2 ->
