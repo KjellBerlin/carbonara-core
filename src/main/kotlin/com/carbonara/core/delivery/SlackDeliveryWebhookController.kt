@@ -13,9 +13,9 @@ class SlackDeliveryWebhookController(
     // Potential dos attack endpoint, introduce rate limiting
 
     @PostMapping("/slack-delivery-status", "application/x-www-form-urlencoded")
-    suspend fun handleSlackWebhook(payload: SlackWebhookRequestBody) {
+    suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody) {
         log.info("--Start Slack--")
-        log.info(payload.payload)
+        log.info(requestBody.payload)
         log.info("--End Slack--")
     }
 
