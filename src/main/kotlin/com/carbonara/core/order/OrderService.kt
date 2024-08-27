@@ -53,9 +53,7 @@ class OrderService(
     suspend fun handleOrderPayment(
         paymentId: String
     ) {
-        val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)
-
-        when(paymentStatus) {
+        when(val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)) {
             PaymentStatus.PAID -> handlePaidOrder(paymentId, paymentStatus)
             PaymentStatus.CANCELED -> handleUnpaidOrder(paymentId, paymentStatus)
             PaymentStatus.FAILED -> handleUnpaidOrder(paymentId, paymentStatus)
