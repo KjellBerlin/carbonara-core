@@ -11,6 +11,8 @@ interface OrderRepository: ReactiveMongoRepository<OrderDao, ObjectId> {
     @Query("{'paymentDetails.paymentId': ?0}")
     fun findFirstByPaymentId(paymentId: String): Mono<OrderDao>
 
-    @Query("{'auth0UserId': ?0, 'paymentDetails.paid': true}")
-    fun findAllByAuth0UserIdAndPaid(auth0UserId: String): Flux<OrderDao>
+    @Query("{'auth0UserId': ?0, 'paymentDetails.internalPaymentStatus': { \$in: ?1 }}")
+    fun findAllByAuth0UserIdAndPaymentStatuses(auth0UserId: String, paymentStatuses: List<String>): Flux<OrderDao>
+
+
 }

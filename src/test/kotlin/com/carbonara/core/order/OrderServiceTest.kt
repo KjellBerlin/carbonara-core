@@ -2,6 +2,7 @@ package com.carbonara.core.order
 
 import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import com.carbonara.core.address.Address
+import com.carbonara.core.payment.InternalPaymentStatus
 import com.carbonara.core.payment.PaymentDetails
 import com.carbonara.core.payment.MolliePaymentService
 import com.carbonara.core.payment.PaymentException
@@ -49,7 +50,7 @@ class OrderServiceTest {
         fun `Happy case`() {
             coEvery { productService.getProductDaosByIds(any()) } returns listOf(TEST_PRODUCT)
             every { orderRepository.save(any()) } returns ORDER_DAO.toMono()
-            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLIE_PAYMENT_DETAILS
+            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns PAYMENT_DETAILS
 
             val result = runBlocking { orderService.createOrder(CREATE_ORDER_INPUT) }
             assertEquals(ORDER_DAO.toOrderDto(), result)
@@ -68,7 +69,7 @@ class OrderServiceTest {
         fun `Null return form database`() {
             coEvery { productService.getProductDaosByIds(any()) } returns listOf(TEST_PRODUCT)
             every { orderRepository.save(any()) } returns null.toMono()
-            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns MOLLIE_PAYMENT_DETAILS
+            every { molliePaymentService.createMolliePaymentLink(any(), any(), any()) } returns PAYMENT_DETAILS
 
             assertThrows<OrderCreationException> {
                 runBlocking { orderService.createOrder(CREATE_ORDER_INPUT) }
@@ -105,13 +106,13 @@ class OrderServiceTest {
         fun `Status not paid`() {
             every { molliePaymentService.getMolliePaymentStatus(any()) } returns PaymentStatus.FAILED
             coEvery { orderRepository.findFirstByPaymentId(any()) } returns ORDER_DAO.toMono()
-            coEvery { orderRepository.save(any()) } returns ORDER_DAO_PAID.toMono()
+            coEvery { orderRepository.save(any()) } returns ORDER_DAO_PAYMENT_FAILED.toMono()
 
             runBlocking { orderService.handleOrderPayment(PAYMENT_ID) }
 
             verify(exactly = 1) { molliePaymentService.getMolliePaymentStatus(PAYMENT_ID) }
-            coVerify(exactly = 0) { orderRepository.findFirstByPaymentId(PAYMENT_ID)}
-            coVerify(exactly = 0) { orderRepository.save(ORDER_DAO_PAID) }
+            coVerify(exactly = 1) { orderRepository.findFirstByPaymentId(PAYMENT_ID)}
+            coVerify(exactly = 1) { orderRepository.save(ORDER_DAO_PAYMENT_FAILED) }
         }
 
         @Test
@@ -144,26 +145,38 @@ class OrderServiceTest {
     }
 
     @Nested
-    inner class GetPaidOrdersByAuth0UserIdTests {
+    inner class GetPaidAndFailedOrdersByAuth0UserIdTests {
 
         @Test
         fun `Happy case`() {
-            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns listOf(ORDER_DAO).toFlux()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
+                auth0UserId = AUTH0_USER_ID,
+                paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
+            ) } returns listOf(ORDER_DAO_PAID, ORDER_DAO_PAYMENT_FAILED).toFlux()
 
             val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
-            assertEquals(listOf(ORDER_DAO.toOrderDto()), result)
+            assertEquals(listOf(ORDER_DAO_PAID.toOrderDto(), ORDER_DAO_PAYMENT_FAILED.toOrderDto()), result)
 
-            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) }
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
+                auth0UserId = AUTH0_USER_ID,
+                paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
+            ) }
         }
 
         @Test
         fun `No orders found`() {
-            coEvery { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) } returns emptyList<OrderDao>().toFlux()
+            coEvery { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
+                auth0UserId = AUTH0_USER_ID,
+                paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
+            ) } returns emptyList<OrderDao>().toFlux()
 
             val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(emptyList<OrderDao>(), result)
 
-            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaid(AUTH0_USER_ID) }
+            coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
+                auth0UserId = AUTH0_USER_ID,
+                paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
+            ) }
         }
     }
 
@@ -197,10 +210,10 @@ class OrderServiceTest {
             productsIds = listOf(PRODUCT_ID.toString()),
             additionalDetails = "No additional details"
         )
-        val MOLLIE_PAYMENT_DETAILS = PaymentDetails(
+        val PAYMENT_DETAILS = PaymentDetails(
             paymentId = PAYMENT_ID,
             paymentRedirectLink = "https://example.com",
-            paid = false
+            internalPaymentStatus = InternalPaymentStatus.PENDING
         )
         val ORDER_DAO = OrderDao(
             orderId = ObjectId(),
@@ -209,11 +222,18 @@ class OrderServiceTest {
             deliveryAddress = CREATE_ORDER_INPUT.deliveryAddress,
             products = listOf(TEST_PRODUCT),
             additionalDetails = CREATE_ORDER_INPUT.additionalDetails,
-            paymentDetails = MOLLIE_PAYMENT_DETAILS,
+            paymentDetails = PAYMENT_DETAILS,
             orderStatus = OrderStatus.PROCESSING_ORDER,
             createdAt = TIME.toString(),
             updatedAt = TIME.toString()
         )
-        val ORDER_DAO_PAID = ORDER_DAO.copy(paymentDetails = ORDER_DAO.paymentDetails.copy(paid = true))
+        val ORDER_DAO_PAID = ORDER_DAO.copy(
+            paymentDetails = ORDER_DAO.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.PAID)
+        )
+        val ORDER_DAO_PAYMENT_FAILED = ORDER_DAO.copy(
+            paymentDetails = ORDER_DAO.paymentDetails.copy(
+                internalPaymentStatus = InternalPaymentStatus.FAILED),
+            orderStatus = OrderStatus.CANCELLED
+        )
     }
 }

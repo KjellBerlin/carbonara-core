@@ -1,6 +1,7 @@
 package com.carbonara.core.order
 
 import be.woutschoovaerts.mollie.data.payment.PaymentStatus
+import com.carbonara.core.payment.InternalPaymentStatus
 import com.carbonara.core.payment.MolliePaymentService
 import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
@@ -53,16 +54,12 @@ class OrderService(
         paymentId: String
     ) {
         val paymentStatus = molliePaymentService.getMolliePaymentStatus(paymentId)
-        if (paymentStatus == PaymentStatus.PAID) {
-            val order = retrieveOrderFromDatabase(paymentId)
 
-            if (!order.paymentDetails.paid) {
-                updateOrderToPaid(order, paymentStatus)
-
-                // TODO: trigger delivery
-            }
-        } else {
-            log.info("Retrieved payment status={} for paymentId={}. Not processing order for now further",
+        when(paymentStatus) {
+            PaymentStatus.PAID -> handlePaidOrder(paymentId, paymentStatus)
+            PaymentStatus.CANCELED -> handleUnpaidOrder(paymentId, paymentStatus)
+            PaymentStatus.FAILED -> handleUnpaidOrder(paymentId, paymentStatus)
+            else -> log.info("Retrieved payment status={} for paymentId={}. Not processing order for now further",
                 paymentStatus, paymentId)
         }
     }
@@ -70,8 +67,10 @@ class OrderService(
     suspend fun getPaidOrdersByAuth0UserId(
         auth0UserId: String
     ): List<OrderDto> {
-        return orderRepository.findAllByAuth0UserIdAndPaid(auth0UserId)
-            .collectList().awaitSingleOrNull()?.map { it.toOrderDto() } ?: emptyList()
+        return orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
+            auth0UserId = auth0UserId,
+            paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
+        ).collectList().awaitSingleOrNull()?.map { it.toOrderDto() } ?: emptyList()
     }
 
     private fun createPaymentDescription(products: List<ProductDao>): String {
@@ -93,15 +92,43 @@ class OrderService(
         }
     }
 
+    private suspend fun handlePaidOrder(paymentId: String, paymentStatus: PaymentStatus) {
+        val order = retrieveOrderFromDatabase(paymentId)
+
+        if (order.paymentDetails.internalPaymentStatus != InternalPaymentStatus.PAID) {
+            updateOrderToPaid(order, paymentStatus)
+
+            // TODO: trigger delivery
+        }
+    }
+
+    private suspend fun handleUnpaidOrder(paymentId: String, paymentStatus: PaymentStatus) {
+        val order = retrieveOrderFromDatabase(paymentId)
+        updateOrderToFailed(order, paymentStatus)
+    }
+
     private suspend fun updateOrderToPaid(order: OrderDao, paymentStatus: PaymentStatus) {
         log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
         val updatedOrder = order.copy(
-            paymentDetails = order.paymentDetails.copy(paid = true),
+            paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.PAID),
             updatedAt = OffsetDateTime.now().toString(),
             orderStatus = OrderStatus.PROCESSING_ORDER
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to paid for orderId={}", order.orderId)
+            throw PaymentException("Failed to update payment status")
+        }
+    }
+
+    private suspend fun updateOrderToFailed(order: OrderDao, paymentStatus: PaymentStatus) {
+        log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
+        val updatedOrder = order.copy(
+            paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.FAILED),
+            updatedAt = OffsetDateTime.now().toString(),
+            orderStatus = OrderStatus.CANCELLED
+        )
+        orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
+            log.error("Failed to update payment status to failed for orderId={}", order.orderId)
             throw PaymentException("Failed to update payment status")
         }
     }
