@@ -93,7 +93,7 @@ class OrderService(
     private suspend fun handlePaidOrder(paymentId: String, paymentStatus: PaymentStatus) {
         val order = retrieveOrderFromDatabase(paymentId)
 
-        if (order.paymentDetails.internalPaymentStatus == InternalPaymentStatus.PAID) {
+        if (order.paymentDetails.internalPaymentStatus != InternalPaymentStatus.PAID) {
             updateOrderToPaid(order, paymentStatus)
 
             // TODO: trigger delivery
