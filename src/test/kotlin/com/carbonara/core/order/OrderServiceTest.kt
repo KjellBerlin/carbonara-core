@@ -145,7 +145,7 @@ class OrderServiceTest {
     }
 
     @Nested
-    inner class GetPaidAndFailedOrdersByAuth0UserIdTests {
+    inner class GetNonPendingOrdersByAuth0UserIdTests {
 
         @Test
         fun `Happy case`() {
@@ -154,7 +154,7 @@ class OrderServiceTest {
                 paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
             ) } returns listOf(ORDER_DAO_PAID, ORDER_DAO_PAYMENT_FAILED).toFlux()
 
-            val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
+            val result = runBlocking { orderService.getNonPendingOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(listOf(ORDER_DAO_PAID.toOrderDto(), ORDER_DAO_PAYMENT_FAILED.toOrderDto()), result)
 
             coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
@@ -170,7 +170,7 @@ class OrderServiceTest {
                 paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
             ) } returns emptyList<OrderDao>().toFlux()
 
-            val result = runBlocking { orderService.getPaidOrdersByAuth0UserId(AUTH0_USER_ID) }
+            val result = runBlocking { orderService.getNonPendingOrdersByAuth0UserId(AUTH0_USER_ID) }
             assertEquals(emptyList<OrderDao>(), result)
 
             coVerify(exactly = 1) { orderRepository.findAllByAuth0UserIdAndPaymentStatuses(

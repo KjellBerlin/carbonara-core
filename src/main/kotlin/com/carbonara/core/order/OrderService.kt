@@ -62,7 +62,7 @@ class OrderService(
         }
     }
 
-    suspend fun getPaidOrdersByAuth0UserId(
+    suspend fun getNonPendingOrdersByAuth0UserId(
         auth0UserId: String
     ): List<OrderDto> {
         return orderRepository.findAllByAuth0UserIdAndPaymentStatuses(
