@@ -102,7 +102,7 @@ class OrderService(
 
     private suspend fun handleUnpaidOrder(paymentId: String, paymentStatus: PaymentStatus) {
         val order = retrieveOrderFromDatabase(paymentId)
-        updateOrderToFailed(order, paymentStatus)
+        updateOrderToPaymentFailed(order, paymentStatus)
     }
 
     private suspend fun updateOrderToPaid(order: OrderDao, paymentStatus: PaymentStatus) {
@@ -118,12 +118,12 @@ class OrderService(
         }
     }
 
-    private suspend fun updateOrderToFailed(order: OrderDao, paymentStatus: PaymentStatus) {
+    private suspend fun updateOrderToPaymentFailed(order: OrderDao, paymentStatus: PaymentStatus) {
         log.info("Retrieved payment status={} for orderId={}, now processing order", paymentStatus, order.orderId)
         val updatedOrder = order.copy(
             paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.FAILED),
             updatedAt = OffsetDateTime.now().toString(),
-            orderStatus = OrderStatus.CANCELLED
+            orderStatus = OrderStatus.PAYMENT_FAILED
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to failed for orderId={}", order.orderId)

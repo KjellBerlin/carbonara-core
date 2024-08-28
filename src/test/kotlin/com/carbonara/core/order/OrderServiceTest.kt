@@ -233,7 +233,7 @@ class OrderServiceTest {
         val ORDER_DAO_PAYMENT_FAILED = ORDER_DAO.copy(
             paymentDetails = ORDER_DAO.paymentDetails.copy(
                 internalPaymentStatus = InternalPaymentStatus.FAILED),
-            orderStatus = OrderStatus.CANCELLED
+            orderStatus = OrderStatus.PAYMENT_FAILED
         )
     }
 }
