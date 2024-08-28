@@ -123,7 +123,7 @@ class OrderService(
         val updatedOrder = order.copy(
             paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.FAILED),
             updatedAt = OffsetDateTime.now().toString(),
-            orderStatus = OrderStatus.CANCELLED
+            orderStatus = OrderStatus.PAYMENT_FAILED
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to failed for orderId={}", order.orderId)
