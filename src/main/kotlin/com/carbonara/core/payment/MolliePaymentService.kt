@@ -51,7 +51,7 @@ class MolliePaymentService {
             PaymentDetails(
                 paymentId = molliePayment.id,
                 paymentRedirectLink = molliePayment.links.checkout.href,
-                paid = false
+                internalPaymentStatus = InternalPaymentStatus.PENDING
             )
         } catch (ex: MollieException) {
             log.error("Failed to create payment for user={} and amount in cents={}, details={}", userId, amountInCents, ex.details)

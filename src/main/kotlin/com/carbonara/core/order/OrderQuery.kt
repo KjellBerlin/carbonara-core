@@ -11,6 +11,6 @@ class OrderQuery(
 
     @GraphQLDescription("Get all paid orders of an user")
     suspend fun paidOrders(userId: String): List<OrderDto> {
-        return orderService.getPaidOrdersByAuth0UserId(userId)
+        return orderService.getNonPendingOrdersByAuth0UserId(userId)
     }
 }
