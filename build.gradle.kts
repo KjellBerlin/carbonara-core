@@ -49,6 +49,10 @@ dependencies {
 	// Mollie
 	implementation("be.woutschoovaerts:mollie:4.3.0")
 
+	// Slack
+	implementation("com.slack.api:slack-api-model-kotlin-extension:1.42.0")
+	implementation("com.slack.api:slack-api-client-kotlin-extension:1.42.0")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.mockk:mockk:1.13.11")
 }

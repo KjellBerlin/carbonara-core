@@ -8,6 +8,7 @@ import com.carbonara.core.payment.MolliePaymentService
 import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
+import com.carbonara.core.slack.SlackMessageService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -31,16 +32,19 @@ class OrderServiceTest {
     private lateinit var orderRepository: OrderRepository
     private lateinit var productService: ProductService
     private lateinit var molliePaymentService: MolliePaymentService
+    private lateinit var slackMessageService: SlackMessageService
 
     @BeforeEach
     fun init() {
         orderRepository = mockk()
         productService = mockk()
         molliePaymentService = mockk()
-        orderService = OrderService(orderRepository, productService, molliePaymentService)
+        slackMessageService = mockk()
+        orderService = OrderService(orderRepository, productService, molliePaymentService, slackMessageService)
 
         mockkStatic(OffsetDateTime::class)
         every { OffsetDateTime.now() } returns TIME
+        every { slackMessageService.sendNewOrderMessage(any(), any(), any(), any(), any()) } returns Unit
     }
 
     @Nested
