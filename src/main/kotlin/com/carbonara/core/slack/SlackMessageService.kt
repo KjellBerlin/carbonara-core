@@ -2,7 +2,6 @@ package com.carbonara.core.slack
 
 import com.slack.api.Slack
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
-import com.slack.api.model.block.composition.BlockCompositions.plainText
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -27,7 +26,6 @@ class SlackMessageService {
         val response = slack.methods(slackToken).chatPostMessage { req -> req
             .channel(slackChannel)
             .blocks {
-                divider()
                 section {
                     markdownText("*New Order*")
                 }
@@ -35,6 +33,7 @@ class SlackMessageService {
                 header {
                     plainText("New order")
                 }
+                */
                 section {
                     markdownText("*Customer Name:*\n$customerName\n*OrderId:*\n$orderId")
                 }
@@ -63,8 +62,7 @@ class SlackMessageService {
                         value("cancelled")
                     }
                 }
-
-                 */
+                divider()
             }
         }
 
