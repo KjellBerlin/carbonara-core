@@ -1,6 +1,7 @@
 package com.carbonara.core.slack
 
 import com.carbonara.core.order.OrderService
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
@@ -41,6 +42,7 @@ data class SlackPayload(
     val actions: List<SlackAction>
 )
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackAction(
     val action_id: String,
     val value: String,
