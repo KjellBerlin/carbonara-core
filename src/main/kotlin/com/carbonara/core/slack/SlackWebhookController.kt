@@ -2,6 +2,7 @@ package com.carbonara.core.slack
 
 import com.carbonara.core.order.OrderService
 import mu.KotlinLogging
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -11,14 +12,13 @@ class SlackDeliveryWebhookController(
 ) {
 
     @PostMapping("/slack-delivery-status", consumes = ["application/x-www-form-urlencoded"])
-    suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody) {
+    suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody): ResponseEntity<Void> {
         log.info("--Start Slack--")
 
-        requestBody.actions.forEach { action ->
-            log.info("Action: ${action.action_id}, Value: ${action.value}")
-        }
+        log.info(requestBody.payload)
 
         log.info("--End Slack--")
+        return ResponseEntity.ok().build()
     }
 
     companion object {
@@ -27,10 +27,5 @@ class SlackDeliveryWebhookController(
 }
 
 data class SlackWebhookRequestBody(
-    val actions: List<SlackAction>
-)
-
-data class SlackAction(
-    val action_id: String,
-    val value: String
+    val payload: String
 )
