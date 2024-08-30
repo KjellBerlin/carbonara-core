@@ -30,13 +30,13 @@ class SlackMessageService {
                 header {
                     plainText("New order")
                 }
+                /*
                 section {
                     markdownText("*Customer Name:*\n$customerName\n*OrderId:*\n$orderId")
                 }
                 section {
                     markdownText("*Address:*\n$address\n$googleMapsLink\n*Products:*\n${productNames.joinToString(", ")}")
                 }
-                /*
                 actions {
                     button {
                         text("ACCEPT", emoji = true)
