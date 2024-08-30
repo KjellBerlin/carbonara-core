@@ -36,30 +36,31 @@ class SlackMessageService {
                 section {
                     markdownText("*Address:*\n$address\n$googleMapsLink\n*Products:*\n${productNames.joinToString(", ")}")
                 }
+                /*
                 actions {
-                    elements {
-                        button {
-                            text("ACCEPT", emoji = true)
-                            style("primary")
-                            value("processing_order")
-                        }
-                        button {
-                            text("DELIVERY_IN_PROGRESS", emoji = true)
-                            style("primary")
-                            value("delivery_in_progress")
-                        }
-                        button {
-                            text("DELIVERED", emoji = true)
-                            style("primary")
-                            value("delivered")
-                        }
-                        button {
-                            text("CANCELLED", emoji = true)
-                            style("danger")
-                            value("cancelled")
-                        }
+                    button {
+                        text("ACCEPT", emoji = true)
+                        style("primary")
+                        value("processing_order")
+                    }
+                    button {
+                        text("DELIVERY_IN_PROGRESS", emoji = true)
+                        style("primary")
+                        value("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        style("primary")
+                        value("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        style("danger")
+                        value("cancelled")
                     }
                 }
+
+                 */
             }
         }
 
