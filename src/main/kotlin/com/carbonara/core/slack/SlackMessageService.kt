@@ -63,7 +63,6 @@ class SlackMessageService {
 
         if (!response.isOk) {
             log.error("Slack API error: ${response.error}")
-            log.error("Needed: ${response.needed}, Provided: ${response.provided}")
             throw SlackException("Failed to send slack message for orderId: $orderId. Error: ${response.error}")
         }
     }
