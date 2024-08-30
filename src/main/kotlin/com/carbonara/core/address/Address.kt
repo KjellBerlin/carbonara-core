@@ -12,5 +12,13 @@ data class Address(
     fun addressPropertiesComplete(): Boolean {
         return street != null && streetNumber != null && postCode != null && city != null && country != null
     }
+
+    override fun toString(): String {
+        return "$street $streetNumber, $postCode $city"
+    }
+
+    fun createGoogleMapsLink(): String {
+        return "https://www.google.com/maps/place/?q=place_id:$googlePlaceId"
+    }
 }
 

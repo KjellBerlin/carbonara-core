@@ -1,4 +1,4 @@
-package com.carbonara.core.delivery
+package com.carbonara.core.slack
 
 import com.carbonara.core.order.OrderService
 import mu.KotlinLogging
@@ -11,6 +11,8 @@ class SlackDeliveryWebhookController(
 ) {
 
     // Potential dos attack endpoint, introduce rate limiting
+
+    // TODO: Handle webhook
 
     @PostMapping("/slack-delivery-status", "application/x-www-form-urlencoded")
     suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody) {

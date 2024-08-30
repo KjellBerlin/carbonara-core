@@ -6,6 +6,7 @@ import com.carbonara.core.payment.MolliePaymentService
 import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
+import com.carbonara.core.slack.SlackMessageService
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
 import org.bson.types.ObjectId
@@ -16,7 +17,8 @@ import java.time.OffsetDateTime
 class OrderService(
     private val orderRepository: OrderRepository,
     private val productService: ProductService,
-    private val molliePaymentService: MolliePaymentService
+    private val molliePaymentService: MolliePaymentService,
+    private val slackMessageService: SlackMessageService
 ) {
 
     suspend fun createOrder(
@@ -96,7 +98,13 @@ class OrderService(
         if (order.paymentDetails.internalPaymentStatus != InternalPaymentStatus.PAID) {
             updateOrderToPaid(order, paymentStatus)
 
-            // TODO: trigger delivery
+            slackMessageService.sendNewOrderMessage(
+                customerName = order.userName,
+                orderId = order.orderId.toString(),
+                address = order.deliveryAddress.toString(),
+                googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
+                productNames = order.products.map { it.productName }
+            )
         }
     }
 
