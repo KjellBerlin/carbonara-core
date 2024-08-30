@@ -3,6 +3,7 @@ package com.carbonara.core.slack
 import com.slack.api.Slack
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.composition.BlockCompositions.plainText
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -61,7 +62,13 @@ class SlackMessageService {
         }
 
         if (!response.isOk) {
-            throw SlackException("Failed to send slack message for orderId: $orderId")
+            log.error("Slack API error: ${response.error}")
+            log.error("Needed: ${response.needed}, Provided: ${response.provided}")
+            throw SlackException("Failed to send slack message for orderId: $orderId. Error: ${response.error}")
         }
+    }
+
+    companion object {
+        private val log = KotlinLogging.logger {}
     }
 }
