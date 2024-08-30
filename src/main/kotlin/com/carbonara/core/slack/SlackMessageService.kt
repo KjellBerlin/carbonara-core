@@ -27,14 +27,6 @@ class SlackMessageService {
             .channel(slackChannel)
             .blocks {
                 section {
-                    markdownText("*New Order*")
-                }
-                /*
-                header {
-                    plainText("New order")
-                }
-                */
-                section {
                     fields {
                         markdownText("*Customer Name:*\n$customerName")
                         markdownText("*OrderId:*\n$orderId")

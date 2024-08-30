@@ -2,6 +2,7 @@ package com.carbonara.core.payment
 
 import com.carbonara.core.order.OrderService
 import mu.KotlinLogging
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -11,12 +12,12 @@ class MolliePaymentWebhookController(
 ) {
 
     // Potential dos attack endpoint, introduce rate limiting
-    // TODO: Add response status
 
-    @PostMapping("/mollie-payment-status", "application/x-www-form-urlencoded")
-    suspend fun handleMollieWebhook(requestBody: MollieWebhookRequestBody) {
+    @PostMapping("/mollie-payment-status", consumes = ["application/x-www-form-urlencoded"])
+    suspend fun handleMollieWebhook(requestBody: MollieWebhookRequestBody): ResponseEntity<Void> {
         log.info("Webhook received for paymentId: {}", requestBody.id)
         orderService.handleOrderPayment(requestBody.id)
+        return ResponseEntity.ok().build()
     }
 
     companion object {
