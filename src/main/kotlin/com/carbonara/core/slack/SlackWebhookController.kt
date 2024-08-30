@@ -1,6 +1,8 @@
 package com.carbonara.core.slack
 
 import com.carbonara.core.order.OrderService
+import com.fasterxml.jackson.annotation.JsonValue
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,7 +17,10 @@ class SlackDeliveryWebhookController(
     suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody): ResponseEntity<Void> {
         log.info("--Start Slack--")
 
-        log.info(requestBody.payload)
+        val slackPayload = objectMapper.readValue(requestBody.payload, SlackPayload::class.java)
+        slackPayload.actions.forEach { action ->
+            log.info("Action: ${action.action_id}, Value: ${action.value}")
+        }
 
         log.info("--End Slack--")
         return ResponseEntity.ok().build()
@@ -23,9 +28,20 @@ class SlackDeliveryWebhookController(
 
     companion object {
         private val log = KotlinLogging.logger {}
+        private val objectMapper = jacksonObjectMapper()
     }
 }
 
 data class SlackWebhookRequestBody(
     val payload: String
+)
+
+
+data class SlackPayload(
+    val actions: List<SlackAction>
+)
+
+data class SlackAction(
+    val action_id: String,
+    val value: String,
 )
