@@ -14,7 +14,7 @@ class SlackDeliveryWebhookController(
 
     // TODO: Handle webhook
 
-    @PostMapping("/slack-delivery-status", "application/x-www-form-urlencoded")
+    @PostMapping("/slack-delivery-status", consumes = ["application/x-www-form-urlencoded"])
     suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody) {
         log.info("--Start Slack--")
         log.info(requestBody.payload)
