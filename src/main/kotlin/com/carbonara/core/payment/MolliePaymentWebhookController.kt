@@ -11,6 +11,7 @@ class MolliePaymentWebhookController(
 ) {
 
     // Potential dos attack endpoint, introduce rate limiting
+    // TODO: Add response status
 
     @PostMapping("/mollie-payment-status", "application/x-www-form-urlencoded")
     suspend fun handleMollieWebhook(requestBody: MollieWebhookRequestBody) {

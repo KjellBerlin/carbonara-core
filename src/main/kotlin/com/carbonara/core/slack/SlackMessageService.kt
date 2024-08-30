@@ -23,20 +23,17 @@ class SlackMessageService {
         productNames: List<String>
     ) {
         val slack = Slack.getInstance()
-        val token = System.getenv(slackToken)
-        val response = slack.methods(token).chatPostMessage { req -> req
+        val response = slack.methods(slackToken).chatPostMessage { req -> req
             .channel(slackChannel)
             .blocks {
                 header {
                     plainText("New order")
                 }
                 section {
-                    markdownText("*Customer Name:*\n$customerName")
-                    markdownText("*OrderId:*\n$orderId")
+                    markdownText("*Customer Name:*\n$customerName\n*OrderId:*\n$orderId")
                 }
                 section {
-                    markdownText("*Address:*\n$address\n$googleMapsLink")
-                    markdownText("*Products:*\n${productNames}")
+                    markdownText("*Address:*\n$address\n$googleMapsLink\n*Products:*\n${productNames.joinToString(", ")}")
                 }
                 actions {
                     button {
@@ -63,7 +60,6 @@ class SlackMessageService {
             }
         }
 
-        // TODO: test this
         if (!response.isOk) {
             throw SlackException("Failed to send slack message for orderId: $orderId")
         }
