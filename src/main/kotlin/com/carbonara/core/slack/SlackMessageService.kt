@@ -43,21 +43,25 @@ class SlackMessageService {
                     button {
                         text("ACCEPT", emoji = true)
                         style("primary")
+                        value("processing_order")
                         actionId("processing_order")
                     }
                     button {
                         text("DELIVERY IN PROGRESS", emoji = true)
                         style("primary")
+                        value("delivery_in_progress")
                         actionId("delivery_in_progress")
                     }
                     button {
                         text("DELIVERED", emoji = true)
                         style("default")
+                        value("delivered")
                         actionId("delivered")
                     }
                     button {
                         text("CANCELLED", emoji = true)
                         style("danger")
+                        value("cancelled")
                         actionId("cancelled")
                     }
                 }
