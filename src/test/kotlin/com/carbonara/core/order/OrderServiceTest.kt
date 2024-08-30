@@ -2,10 +2,12 @@ package com.carbonara.core.order
 
 import be.woutschoovaerts.mollie.data.payment.PaymentStatus
 import com.carbonara.core.address.Address
+import com.carbonara.core.order.exception.OrderCreationException
+import com.carbonara.core.order.exception.OrderNotFoundException
+import com.carbonara.core.order.exception.OrderUpdateException
 import com.carbonara.core.payment.InternalPaymentStatus
 import com.carbonara.core.payment.PaymentDetails
 import com.carbonara.core.payment.MolliePaymentService
-import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
 import com.carbonara.core.slack.SlackMessageService
@@ -138,7 +140,7 @@ class OrderServiceTest {
             coEvery { orderRepository.findFirstByPaymentId(any()) } returns null.toMono()
             coEvery { orderRepository.save(any()) } returns ORDER_DAO_PAID.toMono()
 
-            assertThrows<PaymentException> {
+            assertThrows<OrderNotFoundException> {
                 runBlocking { orderService.handleOrderPayment(PAYMENT_ID) }
             }
 
@@ -181,6 +183,50 @@ class OrderServiceTest {
                 auth0UserId = AUTH0_USER_ID,
                 paymentStatuses = listOf(InternalPaymentStatus.PAID.name, InternalPaymentStatus.FAILED.name)
             ) }
+        }
+    }
+
+    @Nested
+    inner class UpdateOrderStatusTests {
+
+        @Test
+        fun `Happy case - updateOrderStatus`() {
+            val deliveredOrder = ORDER_DAO_PAID.copy(orderStatus = OrderStatus.DELIVERED)
+
+            coEvery { orderRepository.findById(ORDER_DAO_PAID.orderId) } returns ORDER_DAO_PAID.toMono()
+            coEvery { orderRepository.save(any()) } returns deliveredOrder.toMono()
+
+            runBlocking { orderService.updateOrderStatus(ORDER_DAO_PAID.orderId.toString(), OrderStatus.DELIVERED) }
+
+            coVerify(exactly = 1) { orderRepository.findById(ORDER_DAO_PAID.orderId) }
+            coVerify(exactly = 1) { orderRepository.save(deliveredOrder) }
+        }
+
+        @Test
+        fun `Order can not be found`() {
+            coEvery { orderRepository.findById(ORDER_DAO_PAID.orderId) } returns null.toMono()
+
+            assertThrows<OrderNotFoundException> {
+                runBlocking { orderService.updateOrderStatus(ORDER_DAO_PAID.orderId.toString(), OrderStatus.DELIVERED) }
+            }
+
+            coVerify(exactly = 1) { orderRepository.findById(ORDER_DAO.orderId) }
+            coVerify(exactly = 0) { orderRepository.save(any()) }
+        }
+
+        @Test
+        fun `Order can not be updated`() {
+            val deliveredOrder = ORDER_DAO_PAID.copy(orderStatus = OrderStatus.DELIVERED)
+
+            coEvery { orderRepository.findById(ORDER_DAO_PAID.orderId) } returns ORDER_DAO_PAID.toMono()
+            coEvery { orderRepository.save(any()) } returns null.toMono()
+
+            assertThrows<OrderUpdateException> {
+                runBlocking { orderService.updateOrderStatus(ORDER_DAO.orderId.toString(), OrderStatus.DELIVERED) }
+            }
+
+            coVerify(exactly = 1) { orderRepository.findById(ORDER_DAO.orderId) }
+            coVerify(exactly = 1) { orderRepository.save(deliveredOrder) }
         }
     }
 

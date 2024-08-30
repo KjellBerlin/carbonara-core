@@ -1,3 +1,3 @@
-package com.carbonara.core.order
+package com.carbonara.core.order.exception
 
 class OrderCreationException(message: String) : RuntimeException(message)
