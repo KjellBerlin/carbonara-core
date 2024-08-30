@@ -17,8 +17,8 @@ class SlackDeliveryWebhookController(
         val slackPayload = objectMapper.readValue(requestBody.payload, SlackPayload::class.java)
         slackPayload.actions.forEach { action ->
             slackService.handleOrderStatusUpdate(
-                orderId = action.action_id,
-                slackOrderStatus = action.value)
+                orderId = action.value,
+                slackOrderStatus = action.action_id)
         }
 
         return ResponseEntity.ok().build()

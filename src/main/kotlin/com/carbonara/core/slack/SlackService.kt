@@ -27,7 +27,7 @@ class SlackService(
             "delivery_in_progress" -> OrderStatus.DELIVERY_IN_PROGRESS
             "delivered" -> OrderStatus.DELIVERED
             "cancelled" -> OrderStatus.CANCELLED
-            else -> throw IllegalArgumentException("Invalid slack order status")
+            else -> throw IllegalArgumentException("Invalid slack order status: $slackOrderStatus")
         }
     }
 }
