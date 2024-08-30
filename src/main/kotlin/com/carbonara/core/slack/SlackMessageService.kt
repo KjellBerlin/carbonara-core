@@ -35,12 +35,16 @@ class SlackMessageService {
                 }
                 */
                 section {
-                    markdownText("*Customer Name:*\n$customerName")
-                    markdownText("*OrderId:*\n$orderId")
+                    fields {
+                        markdownText("*Customer Name:*\n$customerName")
+                        markdownText("*OrderId:*\n$orderId")
+                    }
                 }
                 section {
-                    markdownText("*Address:*\n$address\n$googleMapsLink")
-                    markdownText("*Products:*\n${productNames.joinToString(", ")}")
+                    fields {
+                        markdownText("*Address:*\n$address\n$googleMapsLink")
+                        markdownText("*Products:*\n${productNames.joinToString(", ")}")
+                    }
                 }
                 actions {
                     button {
