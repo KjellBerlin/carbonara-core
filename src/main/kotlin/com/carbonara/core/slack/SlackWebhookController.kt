@@ -2,7 +2,6 @@ package com.carbonara.core.slack
 
 import com.carbonara.core.order.OrderService
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -37,7 +36,7 @@ data class SlackWebhookRequestBody(
     val payload: String
 )
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackPayload(
     val actions: List<SlackAction>
 )
