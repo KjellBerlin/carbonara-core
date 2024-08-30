@@ -22,6 +22,7 @@ class SlackMessageService {
         googleMapsLink: String,
         productNames: List<String>
     ) {
+
         val slack = Slack.getInstance()
         val response = slack.methods(slackToken).chatPostMessage { req -> req
             .channel(slackChannel)
@@ -42,22 +43,22 @@ class SlackMessageService {
                     button {
                         text("ACCEPT", emoji = true)
                         style("primary")
-                        value("processing_order")
+                        actionId("processing_order")
                     }
                     button {
-                        text("DELIVERY_IN_PROGRESS", emoji = true)
+                        text("DELIVERY IN PROGRESS", emoji = true)
                         style("primary")
-                        value("delivery_in_progress")
+                        actionId("delivery_in_progress")
                     }
                     button {
                         text("DELIVERED", emoji = true)
                         style("primary")
-                        value("delivered")
+                        actionId("delivered")
                     }
                     button {
                         text("CANCELLED", emoji = true)
                         style("danger")
-                        value("cancelled")
+                        actionId("cancelled")
                     }
                 }
                 divider()
