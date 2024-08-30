@@ -27,10 +27,14 @@ class SlackMessageService {
         val response = slack.methods(slackToken).chatPostMessage { req -> req
             .channel(slackChannel)
             .blocks {
+                divider()
+                section {
+                    markdownText("*New Order*")
+                }
+                /*
                 header {
                     plainText("New order")
                 }
-                /*
                 section {
                     markdownText("*Customer Name:*\n$customerName\n*OrderId:*\n$orderId")
                 }
