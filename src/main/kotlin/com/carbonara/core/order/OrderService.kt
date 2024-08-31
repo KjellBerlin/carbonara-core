@@ -1,9 +1,11 @@
 package com.carbonara.core.order
 
 import be.woutschoovaerts.mollie.data.payment.PaymentStatus
+import com.carbonara.core.order.exception.OrderCreationException
+import com.carbonara.core.order.exception.OrderNotFoundException
+import com.carbonara.core.order.exception.OrderUpdateException
 import com.carbonara.core.payment.InternalPaymentStatus
 import com.carbonara.core.payment.MolliePaymentService
-import com.carbonara.core.payment.PaymentException
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
 import com.carbonara.core.slack.SlackMessageService
@@ -73,6 +75,25 @@ class OrderService(
         ).collectList().awaitSingleOrNull()?.map { it.toOrderDto() } ?: emptyList()
     }
 
+    suspend fun updateOrderStatus(
+        orderId: String,
+        orderStatus: OrderStatus
+    ) {
+        val order = orderRepository.findById(ObjectId(orderId)).awaitSingleOrNull() ?: run {
+            log.error("Failed to retrieve order for orderId=$orderId")
+            throw OrderNotFoundException("Failed to retrieve order with orderId=$orderId")
+        }
+        val updatedOrder = order.copy(
+            orderStatus = orderStatus,
+            updatedAt = OffsetDateTime.now().toString()
+        )
+        orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
+            log.error("Failed to update order status for orderId=$orderId")
+            throw OrderUpdateException("Failed to update order status for orderId=$orderId")
+        }
+        log.info("Updated order status to $orderStatus for orderId=$orderId")
+    }
+
     private fun createPaymentDescription(products: List<ProductDao>): String {
         return if (products.size == 1) {
             products.first().productName
@@ -88,7 +109,7 @@ class OrderService(
     private suspend fun retrieveOrderFromDatabase(paymentId: String): OrderDao {
         return orderRepository.findFirstByPaymentId(paymentId).awaitSingleOrNull() ?: run {
             log.error("Failed to retrieve order for paymentId={}", paymentId)
-            throw PaymentException("Failed to retrieve order for payment")
+            throw OrderNotFoundException("Failed to retrieve order for payment with paymentId=$paymentId")
         }
     }
 
@@ -118,11 +139,11 @@ class OrderService(
         val updatedOrder = order.copy(
             paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.PAID),
             updatedAt = OffsetDateTime.now().toString(),
-            orderStatus = OrderStatus.PROCESSING_ORDER
+            orderStatus = OrderStatus.FINDING_AVAILABLE_RIDER
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to paid for orderId={}", order.orderId)
-            throw PaymentException("Failed to update payment status")
+            throw OrderUpdateException("Failed to update payment status for orderId=${order.orderId}")
         }
     }
 
@@ -135,7 +156,7 @@ class OrderService(
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to failed for orderId={}", order.orderId)
-            throw PaymentException("Failed to update payment status")
+            throw OrderUpdateException("Failed to update payment status for orderId=${order.orderId}")
         }
     }
 
