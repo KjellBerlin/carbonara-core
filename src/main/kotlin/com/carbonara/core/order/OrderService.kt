@@ -139,7 +139,7 @@ class OrderService(
         val updatedOrder = order.copy(
             paymentDetails = order.paymentDetails.copy(internalPaymentStatus = InternalPaymentStatus.PAID),
             updatedAt = OffsetDateTime.now().toString(),
-            orderStatus = OrderStatus.PROCESSING_ORDER
+            orderStatus = OrderStatus.FINDING_AVAILABLE_RIDER
         )
         orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
             log.error("Failed to update payment status to paid for orderId={}", order.orderId)

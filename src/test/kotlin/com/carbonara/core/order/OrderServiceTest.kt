@@ -273,7 +273,7 @@ class OrderServiceTest {
             products = listOf(TEST_PRODUCT),
             additionalDetails = CREATE_ORDER_INPUT.additionalDetails,
             paymentDetails = PAYMENT_DETAILS,
-            orderStatus = OrderStatus.PROCESSING_ORDER,
+            orderStatus = OrderStatus.FINDING_AVAILABLE_RIDER,
             createdAt = TIME.toString(),
             updatedAt = TIME.toString()
         )

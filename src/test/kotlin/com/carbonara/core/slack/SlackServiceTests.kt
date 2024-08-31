@@ -23,7 +23,7 @@ class SlackServiceTests {
 
     @TestFactory
     fun orderStatusUpdateTests() = listOf(
-        OrderStatusUpdateScenario("accept", OrderStatus.PROCESSING_ORDER),
+        OrderStatusUpdateScenario("accept", OrderStatus.RIDER_ASSIGNED),
         OrderStatusUpdateScenario("delivery_in_progress", OrderStatus.DELIVERY_IN_PROGRESS),
         OrderStatusUpdateScenario("delivered", OrderStatus.DELIVERED),
         OrderStatusUpdateScenario("cancelled", OrderStatus.CANCELLED)

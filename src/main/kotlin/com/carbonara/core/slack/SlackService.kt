@@ -23,7 +23,7 @@ class SlackService(
         slackOrderStatus: String
     ): OrderStatus {
         return when(slackOrderStatus) {
-            "accept" -> OrderStatus.PROCESSING_ORDER
+            "accept" -> OrderStatus.RIDER_ASSIGNED
             "delivery_in_progress" -> OrderStatus.DELIVERY_IN_PROGRESS
             "delivered" -> OrderStatus.DELIVERED
             "cancelled" -> OrderStatus.CANCELLED
