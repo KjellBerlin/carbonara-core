@@ -54,7 +54,7 @@ class SlackMessageService {
                     }
                     button {
                         text("DELIVERED", emoji = true)
-                        style("danger")
+                        style("primary")
                         value(orderId)
                         actionId("delivered")
                     }
