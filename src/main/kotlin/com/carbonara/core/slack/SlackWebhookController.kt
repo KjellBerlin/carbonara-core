@@ -55,5 +55,5 @@ data class SlackMessage(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackUser(
-    val name: String
+    val username: String
 )
