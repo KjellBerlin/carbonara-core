@@ -44,14 +44,14 @@ class SlackServiceTests {
             )
 
             coEvery { orderService.updateOrderStatus(any(), any()) } returns orderDao
-            coEvery { slackMessageService.updateOrderMessageToAccepted(any()) } returns Unit
+            coEvery { slackMessageService.updateOrderMessage(any()) } returns Unit
 
             runBlocking {
                 slackService.handleOrderStatusUpdate(orderDao.orderId.toString(), scenario.orderType, "1726842841")
             }
 
             coVerify { orderService.updateOrderStatus(orderDao.orderId.toString(), scenario.expectedOrderStatus) }
-            coVerify { slackMessageService.updateOrderMessageToAccepted(slackMessageParams) }
+            coVerify { slackMessageService.updateOrderMessage(slackMessageParams) }
         }
     }
 }

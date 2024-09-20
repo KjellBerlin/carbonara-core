@@ -20,7 +20,7 @@ class SlackService(
             orderId = orderId,
             orderStatus = orderStatus
         )
-        slackMessageService.updateOrderMessageToAccepted(
+        slackMessageService.updateOrderMessage(
             SlackMessageParams(
                 customerName = order.userName,
                 orderId = orderId,

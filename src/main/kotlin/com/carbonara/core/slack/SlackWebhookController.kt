@@ -38,7 +38,8 @@ data class SlackWebhookRequestBody(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackPayload(
     val actions: List<SlackAction>,
-    val message: SlackMessage
+    val message: SlackMessage,
+    val user: SlackUser
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,4 +51,9 @@ data class SlackAction(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackMessage(
     val ts: String
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SlackUser(
+    val name: String
 )
