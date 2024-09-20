@@ -76,6 +76,9 @@ class SlackMessageService {
     fun updateOrderMessage(
         params: SlackMessageParams
     ) {
+
+        log.info("Username: ${params.userName}")
+
         val slackResponse = when(params.orderStatus) {
             OrderStatus.RIDER_ASSIGNED -> updateOrderMessageToAccepted(params)
             OrderStatus.DELIVERY_IN_PROGRESS -> updateOrderMessageToDeliveryInProgress(params)
