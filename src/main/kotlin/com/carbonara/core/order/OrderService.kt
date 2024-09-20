@@ -8,6 +8,7 @@ import com.carbonara.core.payment.InternalPaymentStatus
 import com.carbonara.core.payment.MolliePaymentService
 import com.carbonara.core.product.ProductDao
 import com.carbonara.core.product.ProductService
+import com.carbonara.core.slack.SlackMessageParams
 import com.carbonara.core.slack.SlackMessageService
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
@@ -78,20 +79,21 @@ class OrderService(
     suspend fun updateOrderStatus(
         orderId: String,
         orderStatus: OrderStatus
-    ) {
+    ): OrderDao {
         val order = orderRepository.findById(ObjectId(orderId)).awaitSingleOrNull() ?: run {
             log.error("Failed to retrieve order for orderId=$orderId")
             throw OrderNotFoundException("Failed to retrieve order with orderId=$orderId")
         }
-        val updatedOrder = order.copy(
+        val orderUpdate = order.copy(
             orderStatus = orderStatus,
             updatedAt = OffsetDateTime.now().toString()
         )
-        orderRepository.save(updatedOrder).awaitSingleOrNull() ?: run {
+        val updatedOrder = orderRepository.save(orderUpdate).awaitSingleOrNull() ?: run {
             log.error("Failed to update order status for orderId=$orderId")
             throw OrderUpdateException("Failed to update order status for orderId=$orderId")
         }
         log.info("Updated order status to $orderStatus for orderId=$orderId")
+        return updatedOrder
     }
 
     private fun createPaymentDescription(products: List<ProductDao>): String {
@@ -120,11 +122,13 @@ class OrderService(
             updateOrderToPaid(order, paymentStatus)
 
             slackMessageService.sendNewOrderMessage(
-                customerName = order.userName,
-                orderId = order.orderId.toString(),
-                address = order.deliveryAddress.toString(),
-                googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
-                productNames = order.products.map { it.productName }
+                SlackMessageParams(
+                    customerName = order.userName,
+                    orderId = order.orderId.toString(),
+                    address = order.deliveryAddress.toString(),
+                    googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
+                    productNames = order.products.map { it.productName }
+                )
             )
         }
     }

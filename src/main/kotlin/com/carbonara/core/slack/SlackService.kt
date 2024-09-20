@@ -6,16 +6,30 @@ import org.springframework.stereotype.Service
 
 @Service
 class SlackService(
-    private val orderService: OrderService
+    private val orderService: OrderService,
+    private val slackMessageService: SlackMessageService
 ) {
 
     suspend fun handleOrderStatusUpdate(
         orderId: String,
-        slackOrderStatus: String
+        slackOrderStatus: String,
+        messageTimestamp: String
     ) {
-        orderService.updateOrderStatus(
+        val orderStatus = mapSlackOrderStatusToOrderStatus(slackOrderStatus)
+        val order = orderService.updateOrderStatus(
             orderId = orderId,
-            orderStatus = mapSlackOrderStatusToOrderStatus(slackOrderStatus)
+            orderStatus = orderStatus
+        )
+        slackMessageService.updateOrderMessageToAccepted(
+            SlackMessageParams(
+                customerName = order.userName,
+                orderId = orderId,
+                address = order.deliveryAddress.toString(),
+                googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
+                productNames = order.products.map { it.productName },
+                timeStamp = messageTimestamp,
+                orderStatus = orderStatus
+            )
         )
     }
 

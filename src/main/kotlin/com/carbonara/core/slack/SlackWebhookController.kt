@@ -18,7 +18,9 @@ class SlackDeliveryWebhookController(
         slackPayload.actions.forEach { action ->
             slackService.handleOrderStatusUpdate(
                 orderId = action.value,
-                slackOrderStatus = action.action_id)
+                slackOrderStatus = action.action_id,
+                messageTimestamp = slackPayload.message.ts
+            )
         }
 
         return ResponseEntity.ok().build()
@@ -35,11 +37,17 @@ data class SlackWebhookRequestBody(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackPayload(
-    val actions: List<SlackAction>
+    val actions: List<SlackAction>,
+    val message: SlackMessage
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackAction(
     val action_id: String,
     val value: String,
+)
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+data class SlackMessage(
+    val ts: String
 )
