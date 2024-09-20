@@ -1,5 +1,6 @@
 package com.carbonara.core.slack
 
+import com.carbonara.core.helper.createOrderDao
 import com.carbonara.core.order.OrderService
 import com.carbonara.core.order.OrderStatus
 import io.mockk.coEvery
@@ -14,11 +15,13 @@ class SlackServiceTests {
 
     private lateinit var orderService: OrderService
     private lateinit var slackService: SlackService
+    private lateinit var slackMessageService: SlackMessageService
 
     @BeforeEach
     fun init() {
         orderService = mockk()
-        slackService = SlackService(orderService)
+        slackMessageService = mockk()
+        slackService = SlackService(orderService, slackMessageService)
     }
 
     @TestFactory
@@ -29,13 +32,26 @@ class SlackServiceTests {
         OrderStatusUpdateScenario("cancelled", OrderStatus.CANCELLED)
     ).map { scenario ->
         DynamicTest.dynamicTest("Happy case for order status update with status ${scenario.orderType}") {
-            coEvery { orderService.updateOrderStatus(any(), any()) } returns Unit
+            val orderDao = createOrderDao(orderStatus = scenario.expectedOrderStatus)
+            val slackMessageParams = SlackMessageParams(
+                customerName = orderDao.userName,
+                orderId = orderDao.orderId.toString(),
+                address = orderDao.deliveryAddress.toString(),
+                googleMapsLink = orderDao.deliveryAddress.createGoogleMapsLink(),
+                productNames = orderDao.products.map { it.productName },
+                orderStatus = scenario.expectedOrderStatus,
+                timeStamp = "1726842841"
+            )
+
+            coEvery { orderService.updateOrderStatus(any(), any()) } returns orderDao
+            coEvery { slackMessageService.updateOrderMessageToAccepted(any()) } returns Unit
 
             runBlocking {
-                slackService.handleOrderStatusUpdate("1", scenario.orderType)
+                slackService.handleOrderStatusUpdate(orderDao.orderId.toString(), scenario.orderType, "1726842841")
             }
 
-            coVerify { orderService.updateOrderStatus("1", scenario.expectedOrderStatus) }
+            coVerify { orderService.updateOrderStatus(orderDao.orderId.toString(), scenario.expectedOrderStatus) }
+            coVerify { slackMessageService.updateOrderMessageToAccepted(slackMessageParams) }
         }
     }
 }

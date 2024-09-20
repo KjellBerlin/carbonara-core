@@ -46,7 +46,7 @@ class OrderServiceTest {
 
         mockkStatic(OffsetDateTime::class)
         every { OffsetDateTime.now() } returns TIME
-        every { slackMessageService.sendNewOrderMessage(any(), any(), any(), any(), any()) } returns Unit
+        every { slackMessageService.sendNewOrderMessage(any()) } returns Unit
     }
 
     @Nested
@@ -196,8 +196,10 @@ class OrderServiceTest {
             coEvery { orderRepository.findById(ORDER_DAO_PAID.orderId) } returns ORDER_DAO_PAID.toMono()
             coEvery { orderRepository.save(any()) } returns deliveredOrder.toMono()
 
-            runBlocking { orderService.updateOrderStatus(ORDER_DAO_PAID.orderId.toString(), OrderStatus.DELIVERED) }
+            val orderDao =
+                runBlocking { orderService.updateOrderStatus(ORDER_DAO_PAID.orderId.toString(), OrderStatus.DELIVERED) }
 
+            assertEquals(ORDER_DAO_DELIVERED, orderDao)
             coVerify(exactly = 1) { orderRepository.findById(ORDER_DAO_PAID.orderId) }
             coVerify(exactly = 1) { orderRepository.save(deliveredOrder) }
         }
@@ -285,5 +287,6 @@ class OrderServiceTest {
                 internalPaymentStatus = InternalPaymentStatus.FAILED),
             orderStatus = OrderStatus.PAYMENT_FAILED
         )
+        val ORDER_DAO_DELIVERED = ORDER_DAO_PAID.copy(orderStatus = OrderStatus.DELIVERED)
     }
 }
