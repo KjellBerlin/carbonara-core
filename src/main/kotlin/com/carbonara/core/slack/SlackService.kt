@@ -14,7 +14,7 @@ class SlackService(
         orderId: String,
         slackOrderStatus: String,
         messageTimestamp: String,
-        userName: String
+        slackUserId: String
     ) {
         val orderStatus = mapSlackOrderStatusToOrderStatus(slackOrderStatus)
         val order = orderService.updateOrderStatus(
@@ -30,7 +30,7 @@ class SlackService(
                 productNames = order.products.map { it.productName },
                 timeStamp = messageTimestamp,
                 orderStatus = orderStatus,
-                userName = userName
+                slackUserId = slackUserId
             )
         )
     }

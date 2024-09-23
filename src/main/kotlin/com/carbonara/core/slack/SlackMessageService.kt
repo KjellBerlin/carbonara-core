@@ -76,9 +76,6 @@ class SlackMessageService {
     fun updateOrderMessage(
         params: SlackMessageParams
     ) {
-
-        log.info("Username: ${params.userName}")
-
         val slackResponse = when(params.orderStatus) {
             OrderStatus.RIDER_ASSIGNED -> updateOrderMessageToAccepted(params)
             OrderStatus.DELIVERY_IN_PROGRESS -> updateOrderMessageToDeliveryInProgress(params)
@@ -119,7 +116,7 @@ class SlackMessageService {
                 }
                 section {
                     fields {
-                        markdownText("*Rider:*\n<@${params.userName}>")
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
                     }
                 }
                 actions {
@@ -171,6 +168,11 @@ class SlackMessageService {
                         markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
                     }
                 }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
+                    }
+                }
                 actions {
                     button {
                         text("ACCEPT", emoji = true)
@@ -218,6 +220,11 @@ class SlackMessageService {
                     fields {
                         markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
                         markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
                     }
                 }
                 actions {
@@ -269,6 +276,11 @@ class SlackMessageService {
                         markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
                     }
                 }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
+                    }
+                }
                 actions {
                     button {
                         text("ACCEPT", emoji = true)
@@ -282,7 +294,6 @@ class SlackMessageService {
                     }
                     button {
                         text("DELIVERED", emoji = true)
-                        style("primary")
                         value(params.orderId)
                         actionId("delivered")
                     }
@@ -311,5 +322,5 @@ data class SlackMessageParams(
     val productNames: List<String>,
     val timeStamp: String? = null,
     val orderStatus: OrderStatus? = null,
-    val userName: String? = null
+    val slackUserId: String? = null
 )

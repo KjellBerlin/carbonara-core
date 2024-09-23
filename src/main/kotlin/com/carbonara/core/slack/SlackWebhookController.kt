@@ -16,15 +16,15 @@ class SlackDeliveryWebhookController(
     suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody): ResponseEntity<Void> {
 
         val slackPayload = objectMapper.readValue(requestBody.payload, SlackPayload::class.java)
-
-        log.info("Slack payload: $slackPayload")
+        log.info("Received slack webhook for orderId=${slackPayload.actions.first().value} " +
+                "and userName=${slackPayload.user.userName}")
 
         slackPayload.actions.forEach { action ->
             slackService.handleOrderStatusUpdate(
                 orderId = action.value,
                 slackOrderStatus = action.action_id,
                 messageTimestamp = slackPayload.message.ts,
-                userName = slackPayload.user.id
+                slackUserId = slackPayload.user.id
             )
         }
 
@@ -61,5 +61,6 @@ data class SlackMessage(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackUser(
-    val id: String
+    val id: String,
+    val userName: String
 )

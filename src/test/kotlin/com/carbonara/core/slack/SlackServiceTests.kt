@@ -41,7 +41,7 @@ class SlackServiceTests {
                 productNames = orderDao.products.map { it.productName },
                 orderStatus = scenario.expectedOrderStatus,
                 timeStamp = "1726842841",
-                userName = "sherlock.holmes"
+                slackUserId = "sherlock.holmes"
             )
 
             coEvery { orderService.updateOrderStatus(any(), any()) } returns orderDao
@@ -52,7 +52,7 @@ class SlackServiceTests {
                     orderId = orderDao.orderId.toString(),
                     slackOrderStatus = scenario.orderStatus,
                     messageTimestamp = "1726842841",
-                    userName = "sherlock.holmes"
+                    slackUserId = "sherlock.holmes"
                 )
             }
 
