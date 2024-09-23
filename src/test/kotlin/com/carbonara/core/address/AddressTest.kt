@@ -31,7 +31,7 @@ class AddressTest {
     @Test
     fun `Happy case - googleMapsLink`() {
         val result = ADDRESS.createGoogleMapsLink()
-        assertEquals("https://www.google.com/maps/place/?q=place_id:$GOOGLE_PLACE_ID", result)
+        assertEquals("https://www.google.com/maps/search/?api=1&query=%20&query_place_id=$GOOGLE_PLACE_ID", result)
     }
 
     companion object {
