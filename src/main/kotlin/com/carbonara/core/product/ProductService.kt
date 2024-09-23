@@ -30,6 +30,7 @@ class ProductService(
                 isActive = false,
                 shortProductDescription = createProductInput.shortProductDescription,
                 longProductDescription = createProductInput.longProductDescription,
+                isProductPlaceHolder = false
             )
         ).awaitSingleOrNull()?.toProductDao()
 

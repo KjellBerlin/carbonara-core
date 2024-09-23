@@ -14,7 +14,8 @@ data class ProductDao(
     val productPictureUrl: String,
     var isActive: Boolean?,
     val shortProductDescription: String,
-    val longProductDescription: String
+    val longProductDescription: String,
+    val isProductPlaceHolder: Boolean?
 ) {
 
     fun toProductDao(): ProductDto {
@@ -25,7 +26,8 @@ data class ProductDao(
             productPictureUrl = productPictureUrl,
             isActive = isActive ?: false,
             shortProductDescription = shortProductDescription,
-            longProductDescription = longProductDescription
+            longProductDescription = longProductDescription,
+            isProductPlaceHolder = isProductPlaceHolder ?: false
         )
     }
 }
