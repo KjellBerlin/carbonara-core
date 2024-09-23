@@ -13,7 +13,8 @@ class SlackService(
     suspend fun handleOrderStatusUpdate(
         orderId: String,
         slackOrderStatus: String,
-        messageTimestamp: String
+        messageTimestamp: String,
+        userName: String
     ) {
         val orderStatus = mapSlackOrderStatusToOrderStatus(slackOrderStatus)
         val order = orderService.updateOrderStatus(
@@ -28,7 +29,8 @@ class SlackService(
                 googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
                 productNames = order.products.map { it.productName },
                 timeStamp = messageTimestamp,
-                orderStatus = orderStatus
+                orderStatus = orderStatus,
+                userName = userName
             )
         )
     }

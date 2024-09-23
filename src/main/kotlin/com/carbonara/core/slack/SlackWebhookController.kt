@@ -23,7 +23,8 @@ class SlackDeliveryWebhookController(
             slackService.handleOrderStatusUpdate(
                 orderId = action.value,
                 slackOrderStatus = action.action_id,
-                messageTimestamp = slackPayload.message.ts
+                messageTimestamp = slackPayload.message.ts,
+                userName = slackPayload.user.username
             )
         }
 
