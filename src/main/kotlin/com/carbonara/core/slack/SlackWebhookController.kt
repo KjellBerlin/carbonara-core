@@ -24,7 +24,7 @@ class SlackDeliveryWebhookController(
                 orderId = action.value,
                 slackOrderStatus = action.action_id,
                 messageTimestamp = slackPayload.message.ts,
-                userName = slackPayload.user.username
+                userName = slackPayload.user.id
             )
         }
 
@@ -61,5 +61,5 @@ data class SlackMessage(
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackUser(
-    val username: String
+    val id: String
 )
