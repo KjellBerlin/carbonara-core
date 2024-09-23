@@ -17,7 +17,7 @@ class SlackDeliveryWebhookController(
 
         val slackPayload = objectMapper.readValue(requestBody.payload, SlackPayload::class.java)
         log.info("Received slack webhook for orderId=${slackPayload.actions.first().value} " +
-                "and userName=${slackPayload.user.userName}")
+                "and userName=${slackPayload.user.username}")
 
         slackPayload.actions.forEach { action ->
             slackService.handleOrderStatusUpdate(
@@ -62,5 +62,5 @@ data class SlackMessage(
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackUser(
     val id: String,
-    val userName: String
+    val username: String
 )
