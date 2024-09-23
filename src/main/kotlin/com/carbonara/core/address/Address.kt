@@ -18,7 +18,7 @@ data class Address(
     }
 
     fun createGoogleMapsLink(): String {
-        return "https://www.google.com/maps/place/?q=place_id:$googlePlaceId"
+        return "https://www.google.com/maps/search/?api=1&query=%20&query_place_id=$googlePlaceId"
     }
 }
 
