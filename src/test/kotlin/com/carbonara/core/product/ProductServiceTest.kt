@@ -122,7 +122,8 @@ class ProductServiceTest {
             productPictureUrl = "https://example.com",
             isActive = false,
             shortProductDescription = "Short description",
-            longProductDescription = "Long description"
+            longProductDescription = "Long description",
+            isProductPlaceHolder = false
         )
         val TEST_PRODUCT_1_ACTIVE = TEST_PRODUCT_1_NOT_ACTIVE.copy(isActive = true)
         val TEST_PRODUCT_2_NOT_ACTIVE = ProductDao(
@@ -132,7 +133,8 @@ class ProductServiceTest {
             productPictureUrl = "https://example.com",
             isActive = false,
             shortProductDescription = "Short description",
-            longProductDescription = "Long description"
+            longProductDescription = "Long description",
+            isProductPlaceHolder = false
         )
         val TEST_PRODUCT_2_ACTIVE = TEST_PRODUCT_2_NOT_ACTIVE.copy(isActive = true)
     }

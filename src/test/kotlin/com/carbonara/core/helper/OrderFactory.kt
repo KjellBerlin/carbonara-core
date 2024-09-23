@@ -43,7 +43,8 @@ fun createProduct(
         productPictureUrl = "https://example.com",
         isActive = true,
         shortProductDescription = "Short description",
-        longProductDescription = "Long description"
+        longProductDescription = "Long description",
+        isProductPlaceHolder = false
     )
 }
 

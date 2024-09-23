@@ -245,7 +245,8 @@ class OrderServiceTest {
             productPictureUrl = "https://example.com",
             isActive = true,
             shortProductDescription = "Short description",
-            longProductDescription = "Long description"
+            longProductDescription = "Long description",
+            isProductPlaceHolder = false
         )
         val CREATE_ORDER_INPUT = CreateOrderInput(
             auth0UserId = AUTH0_USER_ID,

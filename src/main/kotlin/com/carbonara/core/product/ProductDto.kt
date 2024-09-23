@@ -19,11 +19,14 @@ data class ProductDto (
     val productPictureUrl: String,
 
     @GraphQLDescription("This product is active right now and can be purchased")
-    var isActive: Boolean,
+    val isActive: Boolean,
 
     @GraphQLDescription("A short description for the checkout page")
-    var shortProductDescription: String,
+    val shortProductDescription: String,
 
     @GraphQLDescription("A long description for the product page")
-    var longProductDescription: String
+    val longProductDescription: String,
+
+    @GraphQLDescription("Is the product an actual product or a placeholder")
+    val isProductPlaceHolder: Boolean
 )
