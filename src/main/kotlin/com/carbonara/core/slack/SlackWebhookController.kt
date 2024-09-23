@@ -2,6 +2,7 @@ package com.carbonara.core.slack
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,6 +16,9 @@ class SlackDeliveryWebhookController(
     suspend fun handleSlackWebhook(requestBody: SlackWebhookRequestBody): ResponseEntity<Void> {
 
         val slackPayload = objectMapper.readValue(requestBody.payload, SlackPayload::class.java)
+
+        log.info("Slack payload: $slackPayload")
+
         slackPayload.actions.forEach { action ->
             slackService.handleOrderStatusUpdate(
                 orderId = action.value,
@@ -28,6 +32,7 @@ class SlackDeliveryWebhookController(
 
     companion object {
         private val objectMapper = jacksonObjectMapper()
+        private val log = KotlinLogging.logger {}
     }
 }
 
@@ -39,12 +44,12 @@ data class SlackWebhookRequestBody(
 data class SlackPayload(
     val actions: List<SlackAction>,
     val message: SlackMessage,
-    val user: SlackUser
+    val user: SlackUser // Not sure if this is here
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class SlackAction(
-    val action_id: String,
+    val action_id: String, // Storing orderId in here
     val value: String,
 )
 
