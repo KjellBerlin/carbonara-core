@@ -81,6 +81,7 @@ class SlackMessageService {
             OrderStatus.DELIVERY_IN_PROGRESS -> updateOrderMessageToDeliveryInProgress(params)
             OrderStatus.DELIVERED -> updateOrderMessageToDelivered(params)
             OrderStatus.CANCELLED -> updateOrderMessageToCancelled(params)
+            OrderStatus.FINDING_AVAILABLE_RIDER -> updateOrderMessageToUnassigned(params)
             else -> throw IllegalArgumentException("Cannot update slack message based on order status ${params.orderStatus}")
         }
 
@@ -141,6 +142,11 @@ class SlackMessageService {
                         value(params.orderId)
                         actionId("cancelled")
                     }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
                 }
                 divider()
             }
@@ -194,6 +200,11 @@ class SlackMessageService {
                         text("CANCELLED", emoji = true)
                         value(params.orderId)
                         actionId("cancelled")
+                    }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
                     }
                 }
                 divider()
@@ -249,6 +260,11 @@ class SlackMessageService {
                         value(params.orderId)
                         actionId("cancelled")
                     }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
                 }
                 divider()
             }
@@ -294,6 +310,63 @@ class SlackMessageService {
                     }
                     button {
                         text("DELIVERED", emoji = true)
+                        value(params.orderId)
+                        actionId("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        style("danger")
+                        value(params.orderId)
+                        actionId("cancelled")
+                    }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
+                }
+                divider()
+            }
+        }
+    }
+
+    fun updateOrderMessageToUnassigned(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
+
+        val slack = Slack.getInstance()
+        return slack.methods(slackToken).chatUpdate { req -> req
+            .channel(slackChannel)
+            .ts(params.timeStamp)
+            .blocks {
+                section {
+                    fields {
+                        markdownText("*Customer Name:*\n${params.customerName}")
+                        markdownText("*OrderId:*\n${params.orderId}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
+                        markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                actions {
+                    button {
+                        text("ACCEPT", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("accept")
+                    }
+                    button {
+                        text("DELIVERY IN PROGRESS", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        style("primary")
                         value(params.orderId)
                         actionId("delivered")
                     }
