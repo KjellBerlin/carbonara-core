@@ -13,14 +13,15 @@ class SlackService(
     suspend fun handleOrderStatusUpdate(
         orderId: String,
         slackOrderStatus: String,
-        messageTimestamp: String
+        messageTimestamp: String,
+        slackUserId: String
     ) {
         val orderStatus = mapSlackOrderStatusToOrderStatus(slackOrderStatus)
         val order = orderService.updateOrderStatus(
             orderId = orderId,
             orderStatus = orderStatus
         )
-        slackMessageService.updateOrderMessageToAccepted(
+        slackMessageService.updateOrderMessage(
             SlackMessageParams(
                 customerName = order.userName,
                 orderId = orderId,
@@ -28,7 +29,8 @@ class SlackService(
                 googleMapsLink = order.deliveryAddress.createGoogleMapsLink(),
                 productNames = order.products.map { it.productName },
                 timeStamp = messageTimestamp,
-                orderStatus = orderStatus
+                orderStatus = orderStatus,
+                slackUserId = slackUserId
             )
         )
     }
@@ -41,6 +43,7 @@ class SlackService(
             "delivery_in_progress" -> OrderStatus.DELIVERY_IN_PROGRESS
             "delivered" -> OrderStatus.DELIVERED
             "cancelled" -> OrderStatus.CANCELLED
+            "unassign" -> OrderStatus.FINDING_AVAILABLE_RIDER
             else -> throw IllegalArgumentException("Invalid slack order status: $slackOrderStatus")
         }
     }

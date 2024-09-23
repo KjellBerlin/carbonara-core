@@ -3,6 +3,7 @@ package com.carbonara.core.slack
 import com.carbonara.core.order.OrderStatus
 import com.slack.api.Slack
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
+import com.slack.api.methods.response.chat.ChatUpdateResponse
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -72,13 +73,33 @@ class SlackMessageService {
         }
     }
 
-    // TODO: Update depending on actual status
-    fun updateOrderMessageToAccepted(
+    fun updateOrderMessage(
         params: SlackMessageParams
     ) {
+        val slackResponse = when(params.orderStatus) {
+            OrderStatus.RIDER_ASSIGNED -> updateOrderMessageToAccepted(params)
+            OrderStatus.DELIVERY_IN_PROGRESS -> updateOrderMessageToDeliveryInProgress(params)
+            OrderStatus.DELIVERED -> updateOrderMessageToDelivered(params)
+            OrderStatus.CANCELLED -> updateOrderMessageToCancelled(params)
+            OrderStatus.FINDING_AVAILABLE_RIDER -> updateOrderMessageToUnassigned(params)
+            else -> throw IllegalArgumentException("Cannot update slack message based on order status ${params.orderStatus}")
+        }
+
+        if (slackResponse == null) {
+            log.error("Slack API error: Slack response null")
+            throw SlackException("Failed to update slack message for orderId: ${params.orderId}. Error: Slack response null")
+        } else if (!slackResponse.isOk) {
+            log.error("Slack API error: ${slackResponse.error}")
+            throw SlackException("Failed to update slack message for orderId: ${params.orderId}. Error: ${slackResponse.error}")
+        }
+    }
+
+    private fun updateOrderMessageToAccepted(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
 
         val slack = Slack.getInstance()
-        val response = slack.methods(slackToken).chatUpdate { req -> req
+        return slack.methods(slackToken).chatUpdate { req -> req
             .channel(slackChannel)
             .ts(params.timeStamp)
             .blocks {
@@ -92,6 +113,11 @@ class SlackMessageService {
                     fields {
                         markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
                         markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
                     }
                 }
                 actions {
@@ -116,17 +142,245 @@ class SlackMessageService {
                         value(params.orderId)
                         actionId("cancelled")
                     }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
                 }
                 divider()
             }
         }
+    }
 
-        if (!response.isOk) {
-            log.error("Slack API error: ${response.error}")
-            throw SlackException("Failed to update slack message for orderId: ${params.orderId}. Error: ${response.error}")
+    private fun updateOrderMessageToDeliveryInProgress(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
+
+        val slack = Slack.getInstance()
+        return slack.methods(slackToken).chatUpdate { req -> req
+            .channel(slackChannel)
+            .ts(params.timeStamp)
+            .blocks {
+                section {
+                    fields {
+                        markdownText("*Customer Name:*\n${params.customerName}")
+                        markdownText("*OrderId:*\n${params.orderId}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
+                        markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
+                    }
+                }
+                actions {
+                    button {
+                        text("ACCEPT", emoji = true)
+                        value(params.orderId)
+                        actionId("accept")
+                    }
+                    button {
+                        text("DELIVERY IN PROGRESS", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        value(params.orderId)
+                        actionId("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        value(params.orderId)
+                        actionId("cancelled")
+                    }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
+                }
+                divider()
+            }
         }
     }
 
+    private fun updateOrderMessageToDelivered(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
+
+        val slack = Slack.getInstance()
+        return slack.methods(slackToken).chatUpdate { req -> req
+            .channel(slackChannel)
+            .ts(params.timeStamp)
+            .blocks {
+                section {
+                    fields {
+                        markdownText("*Customer Name:*\n${params.customerName}")
+                        markdownText("*OrderId:*\n${params.orderId}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
+                        markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
+                    }
+                }
+                actions {
+                    button {
+                        text("ACCEPT", emoji = true)
+                        value(params.orderId)
+                        actionId("accept")
+                    }
+                    button {
+                        text("DELIVERY IN PROGRESS", emoji = true)
+                        value(params.orderId)
+                        actionId("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        value(params.orderId)
+                        actionId("cancelled")
+                    }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
+                }
+                divider()
+            }
+        }
+    }
+
+    private fun updateOrderMessageToCancelled(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
+
+        val slack = Slack.getInstance()
+        return slack.methods(slackToken).chatUpdate { req -> req
+            .channel(slackChannel)
+            .ts(params.timeStamp)
+            .blocks {
+                section {
+                    fields {
+                        markdownText("*Customer Name:*\n${params.customerName}")
+                        markdownText("*OrderId:*\n${params.orderId}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
+                        markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Rider:*\n<@${params.slackUserId}>")
+                    }
+                }
+                actions {
+                    button {
+                        text("ACCEPT", emoji = true)
+                        value(params.orderId)
+                        actionId("accept")
+                    }
+                    button {
+                        text("DELIVERY IN PROGRESS", emoji = true)
+                        value(params.orderId)
+                        actionId("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        value(params.orderId)
+                        actionId("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        style("danger")
+                        value(params.orderId)
+                        actionId("cancelled")
+                    }
+                    button {
+                        text("UNASSIGN", emoji = true)
+                        value(params.orderId)
+                        actionId("unassign")
+                    }
+                }
+                divider()
+            }
+        }
+    }
+
+    fun updateOrderMessageToUnassigned(
+        params: SlackMessageParams
+    ): ChatUpdateResponse? {
+
+        val slack = Slack.getInstance()
+        return slack.methods(slackToken).chatUpdate { req -> req
+            .channel(slackChannel)
+            .ts(params.timeStamp)
+            .blocks {
+                section {
+                    fields {
+                        markdownText("*Customer Name:*\n${params.customerName}")
+                        markdownText("*OrderId:*\n${params.orderId}")
+                    }
+                }
+                section {
+                    fields {
+                        markdownText("*Address:*\n${params.address}\n${params.googleMapsLink}")
+                        markdownText("*Products:*\n${params.productNames.joinToString(", ")}")
+                    }
+                }
+                actions {
+                    button {
+                        text("ACCEPT", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("accept")
+                    }
+                    button {
+                        text("DELIVERY IN PROGRESS", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("delivery_in_progress")
+                    }
+                    button {
+                        text("DELIVERED", emoji = true)
+                        style("primary")
+                        value(params.orderId)
+                        actionId("delivered")
+                    }
+                    button {
+                        text("CANCELLED", emoji = true)
+                        style("danger")
+                        value(params.orderId)
+                        actionId("cancelled")
+                    }
+                }
+                divider()
+            }
+        }
+    }
 
     companion object {
         private val log = KotlinLogging.logger {}
@@ -140,5 +394,6 @@ data class SlackMessageParams(
     val googleMapsLink: String,
     val productNames: List<String>,
     val timeStamp: String? = null,
-    val orderStatus: OrderStatus? = null
+    val orderStatus: OrderStatus? = null,
+    val slackUserId: String? = null
 )

@@ -31,7 +31,7 @@ class SlackServiceTests {
         OrderStatusUpdateScenario("delivered", OrderStatus.DELIVERED),
         OrderStatusUpdateScenario("cancelled", OrderStatus.CANCELLED)
     ).map { scenario ->
-        DynamicTest.dynamicTest("Happy case for order status update with status ${scenario.orderType}") {
+        DynamicTest.dynamicTest("Happy case for order status update with status ${scenario.orderStatus}") {
             val orderDao = createOrderDao(orderStatus = scenario.expectedOrderStatus)
             val slackMessageParams = SlackMessageParams(
                 customerName = orderDao.userName,
@@ -40,23 +40,29 @@ class SlackServiceTests {
                 googleMapsLink = orderDao.deliveryAddress.createGoogleMapsLink(),
                 productNames = orderDao.products.map { it.productName },
                 orderStatus = scenario.expectedOrderStatus,
-                timeStamp = "1726842841"
+                timeStamp = "1726842841",
+                slackUserId = "sherlock.holmes"
             )
 
             coEvery { orderService.updateOrderStatus(any(), any()) } returns orderDao
-            coEvery { slackMessageService.updateOrderMessageToAccepted(any()) } returns Unit
+            coEvery { slackMessageService.updateOrderMessage(any()) } returns Unit
 
             runBlocking {
-                slackService.handleOrderStatusUpdate(orderDao.orderId.toString(), scenario.orderType, "1726842841")
+                slackService.handleOrderStatusUpdate(
+                    orderId = orderDao.orderId.toString(),
+                    slackOrderStatus = scenario.orderStatus,
+                    messageTimestamp = "1726842841",
+                    slackUserId = "sherlock.holmes"
+                )
             }
 
             coVerify { orderService.updateOrderStatus(orderDao.orderId.toString(), scenario.expectedOrderStatus) }
-            coVerify { slackMessageService.updateOrderMessageToAccepted(slackMessageParams) }
+            coVerify { slackMessageService.updateOrderMessage(slackMessageParams) }
         }
     }
 }
 
 data class OrderStatusUpdateScenario(
-    val orderType: String,
+    val orderStatus: String,
     val expectedOrderStatus: OrderStatus
 )
