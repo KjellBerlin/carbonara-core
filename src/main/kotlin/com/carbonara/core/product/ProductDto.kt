@@ -3,7 +3,7 @@ package com.carbonara.core.product
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.scalars.ID
 
-@GraphQLDescription("A food box for customers")
+@GraphQLDescription("Product for customer")
 data class ProductDto (
 
     @GraphQLDescription("Unique identifier of a product")
