@@ -1,6 +1,6 @@
 # The Carbonara App
 
-The Carbonara app is an open-source project designed to demonstrate how various components can be combined to create a fully functional end-to-end solution, with both frontend and backend. This React Native app is inspired by a sample from Creative Tim.
+The Carbonara app is an open-source project designed to demonstrate how various components can be combined to create a fully functional end-to-end solution, with both frontend and backend.
 
 The imaginary use case for this app is a meal delivery service, where users can order meals and have them instantly delivered within a specific geographic area.
 
