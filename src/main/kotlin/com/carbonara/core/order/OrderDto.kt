@@ -5,7 +5,7 @@ import com.carbonara.core.product.ProductDto
 import com.expediagroup.graphql.generator.annotations.GraphQLDescription
 import com.expediagroup.graphql.generator.scalars.ID
 
-@GraphQLDescription("A customer order for a foodbox")
+@GraphQLDescription("A customer order for a product")
 data class OrderDto (
     @GraphQLDescription("Unique identifier of an order")
     val orderId: ID,
