@@ -54,7 +54,7 @@ dependencies {
 	implementation("com.slack.api:slack-api-client-kotlin-extension:1.42.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.mockk:mockk:1.13.11")
+	testImplementation("io.mockk:mockk:1.13.12")
 }
 
 tasks.withType<KotlinCompile> {
